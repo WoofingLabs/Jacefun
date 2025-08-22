@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X Layer Meme Coin Wallet</title>
+    <link rel="icon" href="https://woofingjace.com/images/jace.png" type="image/x-icon">
+    <style>
+        body { background: #000000; font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #ffffff; }
+        .container { max-width: 800px; margin: 0 auto; background: #1a1a1a; padding: 20px; border-radius: 8px; }
+        h1 { text-align: center; font-size: 24px; margin-bottom: 20px; }
+        h2 { font-size: 20px; margin-bottom: 10px; }
+        .section { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; background: #2d2d2d; border: 1px solid #444444; color: #ffffff; border-radius: 4px; }
+        button { background: #333333; color: #ffffff; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+        button:hover { background: #444444; }
+        .percent-buttons { margin: 10px 0; }
+        .percent-buttons button { margin-right: 5px; }
+        .status { margin-top: 10px; font-size: 14px; }
+        .balance { margin: 10px 0; }
+        .disabled { opacity: 0.5; pointer-events: none; }
+        .progress-bar { width: 100%; background: #2d2d2d; height: 20px; border-radius: 4px; overflow: hidden; }
+        .progress { height: 100%; background: #4caf50; transition: width 0.3s; }
+        .token-list { margin-top: 10px; }
+        .token-list div { display: flex; align-items: center; margin-bottom: 5px; }
+        .token-list input { width: 80%; margin-right: 10px; }
+        .copy-btn { padding: 5px 10px; font-size: 12px; }
+        .token-info { display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>X Layer Meme Coin Wallet</h1>
+        <div class="section">
+            <button id="connectWallet" class="button">Connect Wallet</button>
+            <div id="walletStatus" class="status">Not connected</div>
+        </div>
+        <div class="section">
+            <h2>Search Token Factory</h2>
+            <label for="factoryContract">Token Factory Contract Address:</label>
+            <input type="text" id="factoryContract" placeholder="e.g., 0x562059183Ad4F916BAAACDFbEf93a9c144Fe8328">
+            <button onclick="searchTokens()">Search</button>
+            <div id="tokenList" class="token-list"></div>
+            <div id="searchStatus" class="status"></div>
+        </div>
+        <div class="section">
+            <h2>Create Meme Coin</h2>
+            <label for="tokenName">Token Name:</label>
+            <input type="text" id="tokenName" placeholder="e.g., MyMemeCoin" disabled>
+            <label for="tokenSymbol">Token Symbol:</label>
+            <input type="text" id="tokenSymbol" placeholder="e.g., MMC" disabled>
+            <button id="createToken" onclick="createToken()" disabled>Create Token</button>
+            <div id="createStatus" class="status"></div>
+        </div>
+        <div class="section">
+            <label for="tokenContract">Selected Token Contract Address:</label>
+            <input type="text" id="tokenContract" placeholder="Select a token from the list" disabled>
+            <div id="tokenInfo" class="token-info">
+                <div id="tokenDetails" class="status"></div>
+                <div id="balanceResult" class="balance"></div>
+                <div id="progressResult" class="status"></div>
+                <div class="progress-bar"><div id="progressBar" class="progress" style="width: 0%;"></div></div>
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" placeholder="0.0" step="0.0001" disabled>
+                <div class="percent-buttons">
+                    <button onclick="setPercent(25, 'buy')" disabled>25%</button>
+                    <button onclick="setPercent(50, 'buy')" disabled>50%</button>
+                    <button onclick="setPercent(75, 'buy')" disabled>75%</button>
+                    <button onclick="setPercent(100, 'buy')" disabled>Max</button>
+                </div>
+                <button id="buyButton" onclick="buyTokens()" disabled>Buy Tokens</button>
+                <div class="percent-buttons">
+                    <button onclick="setPercent(25, 'sell')" disabled>25%</button>
+                    <button onclick="setPercent(50, 'sell')" disabled>50%</button>
+                    <button onclick="setPercent(75, 'sell')" disabled>75%</button>
+                    <button onclick="setPercent(100, 'sell')" disabled>Max</button>
+                </div>
+                <button id="sellButton" onclick="sellTokens()" disabled>Sell Tokens</button>
+            </div>
+        </div>
+        <div class="section">
+            <label for="recipientAddress">Recipient Address:</label>
+            <input type="text" id="recipientAddress" placeholder="e.g., 0x..." disabled>
+            <button id="sendButton" onclick="sendTransaction()" disabled>Send Tokens</button>
+            <div id="transactionStatus" class="status"></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script>
+        let web3, accounts, tokenFactoryContract, tokenContract;
+        let currentTokenAddress = '';
+
+        const tokenFactoryAddress = '0x562059183Ad4F916BAAACDFbEf93a9c144Fe8328';
+        const tokenFactoryABI = [
+            {"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"}],"name":"createToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"tokenAddress","type":"address"}],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"sellTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"collateral","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"tokens","outputs":[{"internalType":"enum TokenFactory.TokenState","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"FUNDING_GOAL","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"tokenList","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"tokenCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}
+        ];
+        const tokenABI = [
+            {"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"},
+            {"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"type":"function"},
+            {"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"stateMutability":"view","type":"function"}
+        ];
+
+        const xLayer = { chainId: 196, rpcUrl: 'https://rpc.xlayer.tech' };
+        const FUNDING_SUPPLY = 800000000 * 10**18; // 80% of 1 billion tokens
+
+        async function connectWallet() {
+            if (!window.ethereum) {
+                document.getElementById('walletStatus').innerText = 'Please install MetaMask.';
+                return;
+            }
+            try {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const chainId = await web3.eth.getChainId();
+                if (chainId !== 196) {
+                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xc4' }] });
+                }
+                accounts = await web3.eth.getAccounts();
+                tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+                document.getElementById('walletStatus').innerText = `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+                enableInputs(true);
+                document.getElementById('factoryContract').value = tokenFactoryAddress;
+                searchTokens(); // Auto-search tokens on connect
+            } catch (error) {
+                document.getElementById('walletStatus').innerText = 'Failed to connect: ' + error.message;
+            }
+        }
+
+        function enableInputs(enabled) {
+            document.getElementById('tokenName').disabled = !enabled;
+            document.getElementById('tokenSymbol').disabled = !enabled;
+            document.getElementById('createToken').disabled = !enabled;
+            document.getElementById('recipientAddress').disabled = !enabled;
+            document.getElementById('sendButton').disabled = !enabled;
+        }
+
+        async function searchTokens() {
+            const factoryAddress = document.getElementById('factoryContract').value.trim();
+            if (!web3.utils.isAddress(factoryAddress) || factoryAddress.toLowerCase() !== tokenFactoryAddress.toLowerCase()) {
+                document.getElementById('searchStatus').innerText = 'Invalid or unsupported Token Factory address.';
+                document.getElementById('tokenList').innerHTML = '';
+                return;
+            }
+            try {
+                document.getElementById('searchStatus').innerText = 'Fetching tokens...';
+                const tokenCount = await tokenFactoryContract.methods.tokenCount().call();
+                const startIndex = Math.max(0, tokenCount - 10); // Get last 10 tokens
+                const tokenList = document.getElementById('tokenList');
+                tokenList.innerHTML = '';
+                for (let i = startIndex; i < tokenCount; i++) {
+                    const tokenAddress = await tokenFactoryContract.methods.tokenList(i).call();
+                    const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
+                    const name = await tokenContract.methods.name().call();
+                    const symbol = await tokenContract.methods.symbol().call();
+                    const tokenDiv = document.createElement('div');
+                    tokenDiv.innerHTML = `
+                        <input type="text" value="${tokenAddress}" readonly>
+                        <button class="copy-btn" onclick="copyToClipboard('${tokenAddress}')">Copy</button>
+                        <span>(${name} - ${symbol})</span>
+                        <button onclick="selectToken('${tokenAddress}')">Select</button>
+                    `;
+                    tokenList.appendChild(tokenDiv);
+                }
+                document.getElementById('searchStatus').innerText = `Found ${tokenCount} tokens. Showing last 10.`;
+            } catch (error) {
+                document.getElementById('searchStatus').innerText = 'Error fetching tokens: ' + error.message;
+                document.getElementById('tokenList').innerHTML = '';
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Address copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        async function selectToken(tokenAddress) {
+            currentTokenAddress = tokenAddress;
+            document.getElementById('tokenContract').value = tokenAddress;
+            await fetchTokenInfo();
+        }
+
+        async function createToken() {
+            if (!web3 || !accounts) {
+                document.getElementById('createStatus').innerText = 'Please connect wallet first.';
+                return;
+            }
+            const name = document.getElementById('tokenName').value.trim();
+            const symbol = document.getElementById('tokenSymbol').value.trim();
+            if (!name || !symbol) {
+                document.getElementById('createStatus').innerText = 'Please enter token name and symbol.';
+                return;
+            }
+            try {
+                document.getElementById('createStatus').innerText = 'Creating token...';
+                const gas = await tokenFactoryContract.methods.createToken(name, symbol).estimateGas({ from: accounts[0] });
+                const result = await tokenFactoryContract.methods.createToken(name, symbol).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+                const tokenAddress = await tokenFactoryContract.methods.tokenList(await tokenFactoryContract.methods.tokenCount().call() - 1).call();
+                document.getElementById('createStatus').innerText = `Token created at: ${tokenAddress} (Click Search to refresh list)`;
+                document.getElementById('tokenContract').value = tokenAddress;
+                currentTokenAddress = tokenAddress;
+                await fetchTokenInfo();
+            } catch (error) {
+                document.getElementById('createStatus').innerText = 'Error creating token: ' + error.message;
+            }
+        }
+
+        async function fetchTokenInfo() {
+            if (!web3 || !accounts || !currentTokenAddress) {
+                document.getElementById('tokenInfo').style.display = 'none';
+                document.getElementById('balanceResult').innerText = '';
+                document.getElementById('progressResult').innerText = '';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('amount').disabled = true;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = true);
+                document.getElementById('buyButton').disabled = true;
+                document.getElementById('sellButton').disabled = true;
+                return;
+            }
+            if (!web3.utils.isAddress(currentTokenAddress)) {
+                document.getElementById('tokenInfo').style.display = 'none';
+                document.getElementById('balanceResult').innerText = 'Invalid token contract address.';
+                document.getElementById('progressResult').innerText = '';
+                document.getElementById('progressBar').style.width = '0%';
+                return;
+            }
+            try {
+                tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                const name = await tokenContract.methods.name().call();
+                const symbol = await tokenContract.methods.symbol().call();
+                const balance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                const totalSupply = await tokenContract.methods.totalSupply().call();
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                const collateral = await tokenFactoryContract.methods.collateral(currentTokenAddress).call();
+                const fundingGoal = await tokenFactoryContract.methods.FUNDING_GOAL().call();
+                const progress = (Number(collateral) / Number(fundingGoal)) * 100;
+
+                document.getElementById('tokenDetails').innerText = `Token: ${name} (${symbol})`;
+                document.getElementById('balanceResult').innerText = `Balance: ${web3.utils.fromWei(balance, 'ether')} tokens (Total Supply: ${web3.utils.fromWei(totalSupply, 'ether')})`;
+                document.getElementById('progressResult').innerText = `Funding Progress: ${progress.toFixed(2)}% (State: ${['Not Created', 'Funding', 'Trading'][tokenState]})`;
+                document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
+                document.getElementById('tokenInfo').style.display = 'block';
+
+                // Enable buy/sell buttons only if token is in FUNDING state (1)
+                const isFunding = tokenState == 1;
+                document.getElementById('amount').disabled = !isFunding;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = !isFunding);
+                document.getElementById('buyButton').disabled = !isFunding;
+                document.getElementById('sellButton').disabled = !isFunding;
+            } catch (error) {
+                document.getElementById('tokenInfo').style.display = 'none';
+                document.getElementById('balanceResult').innerText = 'Error fetching token info: ' + error.message;
+                document.getElementById('progressResult').innerText = '';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('amount').disabled = true;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = true);
+                document.getElementById('buyButton').disabled = true;
+                document.getElementById('sellButton').disabled = true;
+            }
+        }
+
+        function setPercent(percent, action) {
+            if (!web3 || !accounts) return;
+            const balanceText = document.getElementById('balanceResult').innerText;
+            if (!balanceText.includes('Balance:')) return;
+            let amount;
+            if (action === 'buy') {
+                const ethBalance = Number(web3.utils.fromWei(accounts[0], 'ether')); // Simplified, ideally fetch from web3.eth.getBalance
+                amount = (ethBalance * percent / 100).toFixed(4);
+                if (percent === 100) amount = (ethBalance - 0.001).toFixed(4);
+            } else {
+                const tokenBalance = parseFloat(balanceText.split(': ')[1].split(' ')[0]);
+                amount = (tokenBalance * percent / 100).toFixed(4);
+                if (percent === 100) amount = (tokenBalance - 0.001).toFixed(4);
+            }
+            document.getElementById('amount').value = amount > 0 ? amount : 0;
+        }
+
+        async function buyTokens() {
+            if (!web3 || !accounts || !currentTokenAddress) {
+                document.getElementById('transactionStatus').innerText = 'Please connect wallet and select a token.';
+                return;
+            }
+            const amount = document.getElementById('amount').value;
+            if (!amount || amount <= 0) {
+                document.getElementById('transactionStatus').innerText = 'Please enter a valid amount.';
+                return;
+            }
+            try {
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                if (tokenState != 1) {
+                    document.getElementById('transactionStatus').innerText = 'Token is not in funding state.';
+                    return;
+                }
+                document.getElementById('transactionStatus').innerText = 'Buying tokens...';
+                const gas = await tokenFactoryContract.methods.buyTokens(currentTokenAddress).estimateGas({ from: accounts[0], value: web3.utils.toWei(amount, 'ether') });
+                await tokenFactoryContract.methods.buyTokens(currentTokenAddress).send({ from: accounts[0], value: web3.utils.toWei(amount, 'ether'), gas: Math.floor(gas * 1.2) });
+                document.getElementById('transactionStatus').innerText = 'Purchase successful!';
+                await fetchTokenInfo();
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = 'Purchase failed: ' + error.message;
+            }
+        }
+
+        async function sellTokens() {
+            if (!web3 || !accounts || !currentTokenAddress) {
+                document.getElementById('transactionStatus').innerText = 'Please connect wallet and select a token.';
+                return;
+            }
+            const amount = document.getElementById('amount').value;
+            if (!amount || amount <= 0) {
+                document.getElementById('transactionStatus').innerText = 'Please enter a valid amount.';
+                return;
+            }
+            try {
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                if (tokenState != 1) {
+                    document.getElementById('transactionStatus').innerText = 'Token is not in funding state.';
+                    return;
+                }
+                document.getElementById('transactionStatus').innerText = 'Selling tokens...';
+                const gas = await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).estimateGas({ from: accounts[0] });
+                await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+                document.getElementById('transactionStatus').innerText = 'Sale successful!';
+                await fetchTokenInfo();
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = 'Sale failed: ' + error.message;
+            }
+        }
+
+        async function sendTransaction() {
+            if (!web3 || !accounts || !currentTokenAddress) {
+                document.getElementById('transactionStatus').innerText = 'Please connect wallet and select a token.';
+                return;
+            }
+            const amount = document.getElementById('amount').value;
+            const recipient = document.getElementById('recipientAddress').value.trim();
+            if (!web3.utils.isAddress(recipient)) {
+                document.getElementById('transactionStatus').innerText = 'Invalid recipient address.';
+                return;
+            }
+            if (!amount || amount <= 0) {
+                document.getElementById('transactionStatus').innerText = 'Please enter a valid amount.';
+                return;
+            }
+            try {
+                document.getElementById('transactionStatus').innerText = 'Sending tokens...';
+                const gas = await tokenContract.methods.transfer(recipient, web3.utils.toWei(amount, 'ether')).estimateGas({ from: accounts[0] });
+                await tokenContract.methods.transfer(recipient, web3.utils.toWei(amount, 'ether')).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+                document.getElementById('transactionStatus').innerText = 'Transfer successful!';
+                await fetchTokenInfo();
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = 'Transfer failed: ' + error.message;
+            }
+        }
+
+        document.getElementById('connectWallet').addEventListener('click', connectWallet);
+        document.getElementById('tokenContract').addEventListener('input', () => {
+            currentTokenAddress = document.getElementById('tokenContract').value.trim();
+            fetchTokenInfo();
+        });
+    </script>
+</body>
+</html>
