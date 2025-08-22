@@ -114,6 +114,8 @@
         .balance {
             margin: 8px 0;
             font-size: 14px;
+            display: inline-block;
+            margin-left: 10px;
         }
         .disabled {
             opacity: 0.5;
@@ -189,6 +191,10 @@
                 flex-direction: column;
                 align-items: center;
             }
+            .balance {
+                display: block;
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -211,12 +217,11 @@
                 <input type="text" id="tokenContract" placeholder="选择或输入代币地址">
                 <div id="tokenInfo" class="token-info">
                     <div id="tokenDetails" class="status"></div>
-                    <div id="balanceResult" class="balance"></div>
                     <div id="progressResult" class="status"></div>
                     <div class="progress-bar"><div id="progressBar" class="progress" style="width: 0%;"></div></div>
                     <div class="section">
                         <h2>买入</h2>
-                        <label for="buyAmount">数量 (ETH):</label>
+                        <label for="buyAmount">数量 (OKB): <span id="okbBalance" class="balance"></span></label>
                         <input type="number" id="buyAmount" placeholder="0.0" step="0.0001" disabled>
                         <div class="percent-buttons">
                             <button onclick="setPercent(25, 'buy')" disabled>25%</button>
@@ -230,7 +235,7 @@
                     </div>
                     <div class="section">
                         <h2>卖出</h2>
-                        <label for="sellAmount">数量 (代币):</label>
+                        <label for="sellAmount">数量 (代币): <span id="tokenBalance" class="balance"></span></label>
                         <input type="number" id="sellAmount" placeholder="0.0" step="0.0001" disabled>
                         <div class="percent-buttons">
                             <button onclick="setPercent(25, 'sell')" disabled>25%</button>
@@ -324,6 +329,7 @@
                 document.getElementById('walletStatus').innerText = `已连接: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
                 enableInputs(true);
                 await searchTokens();
+                await updateBalances();
             } catch (error) {
                 document.getElementById('walletStatus').innerText = '连接失败: ' + (error.message || '未知错误');
                 console.error('Connect wallet error:', error);
@@ -336,7 +342,29 @@
             document.getElementById('createToken').disabled = !enabled;
             document.getElementById('buyAmount').disabled = !enabled;
             document.getElementById('sellAmount').disabled = !enabled;
-            // tokenContract 始终可编辑，允许未连接钱包时输入
+        }
+
+        async function updateBalances() {
+            if (!web3 || !accounts) {
+                document.getElementById('okbBalance').innerText = '请连接钱包';
+                document.getElementById('tokenBalance').innerText = '请连接钱包';
+                return;
+            }
+            try {
+                const okbBalance = await web3.eth.getBalance(accounts[0]);
+                document.getElementById('okbBalance').innerText = `余额: ${web3.utils.fromWei(okbBalance, 'ether')} OKB`;
+                if (currentTokenAddress && web3.utils.isAddress(currentTokenAddress)) {
+                    tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                    const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                    const symbol = await tokenContract.methods.symbol().call();
+                    document.getElementById('tokenBalance').innerText = `余额: ${web3.utils.fromWei(tokenBalance, 'ether')} ${symbol}`;
+                } else {
+                    document.getElementById('tokenBalance').innerText = '请先选择代币';
+                }
+            } catch (error) {
+                document.getElementById('okbBalance').innerText = '获取 OKB 余额失败';
+                document.getElementById('tokenBalance').innerText = '获取代币余额失败';
+            }
         }
 
         async function searchTokens() {
@@ -383,6 +411,7 @@
             currentTokenAddress = tokenAddress;
             document.getElementById('tokenContract').value = tokenAddress;
             await fetchTokenInfo();
+            await updateBalances();
         }
 
         async function createToken() {
@@ -405,6 +434,7 @@
                 document.getElementById('tokenContract').value = tokenAddress;
                 currentTokenAddress = tokenAddress;
                 await fetchTokenInfo();
+                await updateBalances();
             } catch (error) {
                 document.getElementById('createStatus').innerText = '创建代币失败: ' + error.message;
             }
@@ -413,7 +443,6 @@
         async function fetchTokenInfo() {
             if (!currentTokenAddress) {
                 document.getElementById('tokenInfo').style.display = 'none';
-                document.getElementById('balanceResult').innerText = '';
                 document.getElementById('progressResult').innerText = '';
                 document.getElementById('progressBar').style.width = '0%';
                 document.getElementById('buyAmount').disabled = true;
@@ -421,13 +450,15 @@
                 document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = true);
                 document.getElementById('buyButton').disabled = true;
                 document.getElementById('sellButton').disabled = true;
+                document.getElementById('tokenBalance').innerText = '请先选择代币';
                 return;
             }
             if (!web3.utils.isAddress(currentTokenAddress)) {
                 document.getElementById('tokenInfo').style.display = 'none';
-                document.getElementById('balanceResult').innerText = '无效的代币合约地址';
                 document.getElementById('progressResult').innerText = '';
                 document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('tokenDetails').innerText = '无效的代币合约地址';
+                document.getElementById('tokenBalance').innerText = '无效的代币合约地址';
                 return;
             }
             try {
@@ -438,14 +469,8 @@
                 const collateral = await tokenFactoryContract.methods.collateral(currentTokenAddress).call();
                 const fundingGoal = await tokenFactoryContract.methods.FUNDING_GOAL().call();
                 const progress = (Number(collateral) / Number(fundingGoal)) * 100;
-                let balance = '0';
-                if (accounts) {
-                    balance = await tokenContract.methods.balanceOf(accounts[0]).call();
-                }
-                const totalSupply = await tokenContract.methods.totalSupply().call();
 
                 document.getElementById('tokenDetails').innerText = `代币: ${name} (${symbol})`;
-                document.getElementById('balanceResult').innerText = accounts ? `余额: ${web3.utils.fromWei(balance, 'ether')} 代币` : '请连接钱包以查看余额';
                 document.getElementById('progressResult').innerText = `众筹进度: ${progress.toFixed(2)}% (状态: ${['未创建', '众筹中', '交易中'][tokenState]})`;
                 document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
                 document.getElementById('tokenInfo').style.display = 'block';
@@ -456,11 +481,14 @@
                 document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = !isFunding);
                 document.getElementById('buyButton').disabled = !isFunding;
                 document.getElementById('sellButton').disabled = !isFunding;
+
+                await updateBalances();
             } catch (error) {
                 document.getElementById('tokenInfo').style.display = 'none';
-                document.getElementById('balanceResult').innerText = '获取代币信息失败: ' + error.message;
                 document.getElementById('progressResult').innerText = '';
                 document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('tokenDetails').innerText = '获取代币信息失败: ' + error.message;
+                document.getElementById('tokenBalance').innerText = '获取代币信息失败';
                 document.getElementById('buyAmount').disabled = true;
                 document.getElementById('sellAmount').disabled = true;
                 document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = true);
@@ -474,19 +502,19 @@
                 document.getElementById('transactionStatus').innerText = '请先连接钱包';
                 return;
             }
-            const balanceText = document.getElementById('balanceResult').innerText;
             let amount;
             if (action === 'buy') {
-                const ethBalance = await web3.eth.getBalance(accounts[0]);
-                const balanceInEther = Number(web3.utils.fromWei(ethBalance, 'ether'));
-                amount = (balanceInEther * percent / 100).toFixed(4);
-                if (percent === 100) amount = (balanceInEther - 0.001).toFixed(4);
+                const okbBalance = await web3.eth.getBalance(accounts[0]);
+                const balanceInOKB = Number(web3.utils.fromWei(okbBalance, 'ether'));
+                amount = (balanceInOKB * percent / 100).toFixed(4);
+                if (percent === 100) amount = (balanceInOKB - 0.001).toFixed(4);
                 document.getElementById('buyAmount').value = amount > 0 ? amount : 0;
             } else {
-                if (!balanceText.includes('余额:')) return;
-                const tokenBalance = parseFloat(balanceText.split(': ')[1].split(' ')[0]);
-                amount = (tokenBalance * percent / 100).toFixed(4);
-                if (percent === 100) amount = (tokenBalance - 0.001).toFixed(4);
+                if (!currentTokenAddress || !tokenContract) return;
+                const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                const balanceInTokens = Number(web3.utils.fromWei(tokenBalance, 'ether'));
+                amount = (balanceInTokens * percent / 100).toFixed(4);
+                if (percent === 100) amount = (balanceInTokens - 0.001).toFixed(4);
                 document.getElementById('sellAmount').value = amount > 0 ? amount : 0;
             }
         }
