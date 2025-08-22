@@ -291,9 +291,33 @@
             try {
                 web3 = new Web3(window.ethereum);
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const chainId = await web3.eth.getChainId();
+                const chainId = Number(await web3.eth.getChainId());
                 if (chainId !== 196) {
-                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xc4' }] });
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0xc4' }]
+                        });
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: '0xc4',
+                                    chainName: 'X Layer',
+                                    rpcUrls: ['https://rpc.xlayer.tech'],
+                                    nativeCurrency: {
+                                        name: 'OKB',
+                                        symbol: 'OKB',
+                                        decimals: 18
+                                    },
+                                    blockExplorerUrls: ['https://www.okx.com/explorer/xlayer']
+                                }]
+                            });
+                        } else {
+                            throw switchError;
+                        }
+                    }
                 }
                 accounts = await web3.eth.getAccounts();
                 tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
@@ -301,7 +325,8 @@
                 enableInputs(true);
                 await searchTokens();
             } catch (error) {
-                document.getElementById('walletStatus').innerText = '连接失败: ' + error.message;
+                document.getElementById('walletStatus').innerText = '连接失败: ' + (error.message || '未知错误');
+                console.error('Connect wallet error:', error);
             }
         }
 
@@ -309,12 +334,16 @@
             document.getElementById('tokenName').disabled = !enabled;
             document.getElementById('tokenSymbol').disabled = !enabled;
             document.getElementById('createToken').disabled = !enabled;
-            document.getElementById('tokenContract').disabled = !enabled;
             document.getElementById('buyAmount').disabled = !enabled;
             document.getElementById('sellAmount').disabled = !enabled;
+            // tokenContract 始终可编辑，允许未连接钱包时输入
         }
 
         async function searchTokens() {
+            if (!web3 || !tokenFactoryContract) {
+                document.getElementById('searchStatus').innerText = '请先连接钱包';
+                return;
+            }
             try {
                 document.getElementById('searchStatus').innerText = '正在加载代币...';
                 const tokenCount = await tokenFactoryContract.methods.tokenCount().call();
@@ -382,7 +411,7 @@
         }
 
         async function fetchTokenInfo() {
-            if (!web3 || !accounts || !currentTokenAddress) {
+            if (!currentTokenAddress) {
                 document.getElementById('tokenInfo').style.display = 'none';
                 document.getElementById('balanceResult').innerText = '';
                 document.getElementById('progressResult').innerText = '';
@@ -405,20 +434,23 @@
                 tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
                 const name = await tokenContract.methods.name().call();
                 const symbol = await tokenContract.methods.symbol().call();
-                const balance = await tokenContract.methods.balanceOf(accounts[0]).call();
-                const totalSupply = await tokenContract.methods.totalSupply().call();
                 const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
                 const collateral = await tokenFactoryContract.methods.collateral(currentTokenAddress).call();
                 const fundingGoal = await tokenFactoryContract.methods.FUNDING_GOAL().call();
                 const progress = (Number(collateral) / Number(fundingGoal)) * 100;
+                let balance = '0';
+                if (accounts) {
+                    balance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                }
+                const totalSupply = await tokenContract.methods.totalSupply().call();
 
                 document.getElementById('tokenDetails').innerText = `代币: ${name} (${symbol})`;
-                document.getElementById('balanceResult').innerText = `余额: ${web3.utils.fromWei(balance, 'ether')} 代币 (总供应量: ${web3.utils.fromWei(totalSupply, 'ether')})`;
+                document.getElementById('balanceResult').innerText = accounts ? `余额: ${web3.utils.fromWei(balance, 'ether')} 代币` : '请连接钱包以查看余额';
                 document.getElementById('progressResult').innerText = `众筹进度: ${progress.toFixed(2)}% (状态: ${['未创建', '众筹中', '交易中'][tokenState]})`;
                 document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
                 document.getElementById('tokenInfo').style.display = 'block';
 
-                const isFunding = tokenState == 1;
+                const isFunding = tokenState == 1 && accounts;
                 document.getElementById('buyAmount').disabled = !isFunding;
                 document.getElementById('sellAmount').disabled = !isFunding;
                 document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = !isFunding);
@@ -438,7 +470,10 @@
         }
 
         async function setPercent(percent, action) {
-            if (!web3 || !accounts) return;
+            if (!web3 || !accounts) {
+                document.getElementById('transactionStatus').innerText = '请先连接钱包';
+                return;
+            }
             const balanceText = document.getElementById('balanceResult').innerText;
             let amount;
             if (action === 'buy') {
@@ -503,7 +538,7 @@
                 await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
                 document.getElementById('transactionStatus').innerText = '卖出成功！';
                 await fetchTokenInfo();
-            } molest (error) {
+            } catch (error) {
                 document.getElementById('transactionStatus').innerText = '卖出失败: ' + error.message;
             }
         }
