@@ -10,7 +10,7 @@
             background: #000000;
             font-family: 'PingFang SC', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             color: #ffffff;
             display: flex;
             justify-content: center;
@@ -19,82 +19,101 @@
             max-width: 1000px;
             width: 100%;
             display: flex;
-            gap: 20px;
+            gap: 15px;
         }
         .sidebar {
-            width: 300px;
+            width: 280px;
             background: #1a1a1a;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             height: fit-content;
         }
         .main {
             flex: 1;
             background: #1a1a1a;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
         }
         h1 {
             text-align: center;
-            font-size: 28px;
-            margin: 0 0 20px;
+            font-size: 26px;
+            margin: 0 0 15px;
             color: #4caf50;
         }
         h2 {
-            font-size: 20px;
-            margin-bottom: 15px;
+            font-size: 18px;
+            margin-bottom: 10px;
         }
         .section {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: #2d2d2d;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
         }
         label {
             display: block;
             margin-bottom: 5px;
-            font-size: 14px;
+            font-size: 13px;
         }
         input {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
             background: #333333;
             border: 1px solid #444444;
             color: #ffffff;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
         }
         button {
-            background: #4caf50;
-            color: #ffffff;
-            padding: 10px 15px;
+            padding: 12px 18px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 14px;
-            margin-right: 5px;
+            font-size: 13px;
+            margin: 5px;
+            touch-action: manipulation;
         }
-        button:hover {
+        .buy-btn {
+            background: #4caf50;
+        }
+        .buy-btn:hover {
             background: #45a049;
         }
-        .percent-buttons {
+        .sell-btn {
+            background: #f44336;
+        }
+        .sell-btn:hover {
+            background: #d32f2f;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
             margin: 10px 0;
+        }
+        .percent-buttons {
+            margin: 8px 0;
             display: flex;
             gap: 5px;
         }
         .percent-buttons button {
             flex: 1;
             padding: 8px;
+            font-size: 12px;
+            background: #555555;
+        }
+        .percent-buttons button:hover {
+            background: #666666;
         }
         .status {
-            margin-top: 10px;
-            font-size: 14px;
+            margin-top: 8px;
+            font-size: 12px;
             color: #bbbbbb;
         }
         .balance {
-            margin: 10px 0;
-            font-size: 16px;
+            margin: 8px 0;
+            font-size: 14px;
         }
         .disabled {
             opacity: 0.5;
@@ -103,10 +122,10 @@
         .progress-bar {
             width: 100%;
             background: #333333;
-            height: 20px;
+            height: 18px;
             border-radius: 6px;
             overflow: hidden;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .progress {
             height: 100%;
@@ -114,25 +133,29 @@
             transition: width 0.3s;
         }
         .token-list {
-            max-height: 400px;
+            max-height: 350px;
             overflow-y: auto;
         }
         .token-list div {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 8px;
             background: #2d2d2d;
-            padding: 10px;
+            padding: 8px;
             border-radius: 6px;
         }
         .token-list input {
-            width: 60%;
-            font-size: 12px;
+            width: 55%;
+            font-size: 11px;
         }
         .copy-btn, .select-btn {
-            padding: 5px 10px;
-            font-size: 12px;
+            padding: 5px 8px;
+            font-size: 11px;
+            background: #555555;
+        }
+        .copy-btn:hover, .select-btn:hover {
+            background: #666666;
         }
         .token-info {
             display: none;
@@ -140,9 +163,31 @@
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
+                gap: 10px;
             }
             .sidebar, .main {
                 width: 100%;
+                padding: 10px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            h2 {
+                font-size: 16px;
+            }
+            button {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+            input {
+                font-size: 12px;
+            }
+            .token-list input {
+                width: 50%;
+            }
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
@@ -171,8 +216,8 @@
             </div>
             <div class="section">
                 <h2>代币操作</h2>
-                <label for="tokenContract">当前代币合约地址:</label>
-                <input type="text" id="tokenContract" placeholder="从左侧列表选择代币" disabled>
+                <label for="tokenContract">代币合约地址:</label>
+                <input type="text" id="tokenContract" placeholder="选择或输入代币地址">
                 <div id="tokenInfo" class="token-info">
                     <div id="tokenDetails" class="status"></div>
                     <div id="balanceResult" class="balance"></div>
@@ -186,14 +231,10 @@
                         <button onclick="setPercent(75, 'buy')" disabled>75%</button>
                         <button onclick="setPercent(100, 'buy')" disabled>最大</button>
                     </div>
-                    <button id="buyButton" onclick="buyTokens()" disabled>买入代币</button>
-                    <div class="percent-buttons">
-                        <button onclick="setPercent(25, 'sell')" disabled>25%</button>
-                        <button onclick="setPercent(50, 'sell')" disabled>50%</button>
-                        <button onclick="setPercent(75, 'sell')" disabled>75%</button>
-                        <button onclick="setPercent(100, 'sell')" disabled>最大</button>
+                    <div class="action-buttons">
+                        <button id="buyButton" class="buy-btn" onclick="buyTokens()" disabled>买入代币</button>
+                        <button id="sellButton" class="sell-btn" onclick="sellTokens()" disabled>卖出代币</button>
                     </div>
-                    <button id="sellButton" onclick="sellTokens()" disabled>卖出代币</button>
                     <div id="transactionStatus" class="status"></div>
                 </div>
             </div>
@@ -223,7 +264,7 @@
         ];
 
         const xLayer = { chainId: 196, rpcUrl: 'https://rpc.xlayer.tech' };
-        const FUNDING_SUPPLY = 800000000 * 10**18; // 80% of 1 billion tokens
+        const FUNDING_SUPPLY = '800000000000000000000000000'; // 800M tokens (18 decimals)
         const RESERVED_AMOUNT = '1000000000000000'; // 0.001 tokens (18 decimals)
 
         async function connectWallet() {
@@ -252,6 +293,7 @@
             document.getElementById('tokenName').disabled = !enabled;
             document.getElementById('tokenSymbol').disabled = !enabled;
             document.getElementById('createToken').disabled = !enabled;
+            document.getElementById('tokenContract').disabled = !enabled;
         }
 
         async function searchTokens() {
