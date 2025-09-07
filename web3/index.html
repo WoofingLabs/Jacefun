@@ -3,203 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JaceFun Domain Token</title>
-    <base href="/web3/">
+    <meta name="description" content="JaceFun OKX: Create, trade, and manage .OKX domain-based tokens on X Layer blockchain. Connect with MetaMask to explore Jace.OKX and more.">
+    <meta name="keywords" content="JaceFun, OKX, domain token, X Layer, blockchain, NFT, Web3, cryptocurrency, WoofingJace">
+    <meta name="robots" content="index, follow">
+    <title>JaceFun OKX - Domain Token Trading</title>
+    <base href="/okxfun/">
     <link rel="icon" href="https://swap.woofingjace.com/image/header/logo.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;400;700&display=swap" rel="stylesheet">
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
         body {
-            font-family: 'Inter', sans-serif;
-            background: #121212;
-            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+            background: #000000;
+            color: #FFFFFF;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            padding: 0;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+        #digital-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
         }
         .container {
             width: 100%;
+            max-width: 800px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: 1.5rem;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         .logo {
-            width: 120px;
-            height: 60px;
+            width: 100px;
+            height: 50px;
             object-fit: contain;
-            margin: 8px 16px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-        .browser-bar {
-            background: #1e1e1e;
-            padding: 8px 16px;
-            border-bottom: 1px solid #333;
-            display: flex;
-            align-items: center;
-            height: 56px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         .nav-buttons {
-            margin-right: 16px;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
         .nav-buttons button {
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 6px;
-            padding: 6px 12px;
-            margin: 0 4px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00FFC8;
+            border-radius: 8px;
+            padding: 0.7rem 1.2rem;
+            color: #FFFFFF;
+            font-size: 0.9rem;
+            font-weight: 400;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            color: #ffffff;
-            height: 32px;
-            min-width: 60px;
-            transition: background 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-buttons button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .nav-buttons button:hover::before {
+            left: 100%;
         }
         .nav-buttons button:hover {
-            background: #3a3a3a;
+            background: #00FFC8;
+            color: #000000;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
         }
         .nav-buttons button:disabled {
-            background: #333;
-            color: #666;
-            cursor: not-allowed;
+            opacity: 0.5;
+            pointer-events: none;
         }
         .address-bar {
             flex: 1;
             display: flex;
             align-items: center;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 12px;
-            padding: 4px 8px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00FFC8;
+            border-radius: 10px;
+            padding: 0.4rem;
+            margin-left: 1rem;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.2);
         }
         .address-bar input {
             flex: 1;
             border: none;
             outline: none;
-            font-size: 14px;
-            padding: 6px;
+            font-size: 0.9rem;
+            padding: 0.5rem;
             background: transparent;
-            color: #ffffff;
+            color: #FFFFFF;
+            transition: border 0.3s ease;
+        }
+        .address-bar input:focus {
+            border-bottom: 1px solid #00FFC8;
         }
         .address-bar input::placeholder {
-            color: #999;
+            color: #BBBBBB;
         }
         .address-bar button {
-            background: #1e88e5;
-            color: #ffffff;
+            background: #00FFC8;
+            color: #000000;
             border: none;
-            border-radius: 6px;
-            padding: 6px 12px;
+            border-radius: 8px;
+            padding: 0.7rem 1.2rem;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            height: 32px;
-            min-width: 60px;
-            transition: background 0.2s ease;
+            font-size: 0.9rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
         }
         .address-bar button:hover {
-            background: #1565c0;
+            background: #FFFFFF;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
         }
         .content {
             flex: 1;
-            padding: 16px;
+            width: 100%;
+            padding: 1rem;
             overflow-y: auto;
         }
         .section {
-            background: #1e1e1e;
-            padding: 12px;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            padding: 1.2rem;
             border-radius: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.2);
         }
         h2 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #1e88e5;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00FFC8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.8rem;
+            animation: neon-glow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes neon-glow {
+            from { text-shadow: 0 0 5px rgba(0, 255, 200, 0.5); }
+            to { text-shadow: 0 0 12px rgba(0, 255, 200, 0.9), 0 0 20px rgba(0, 255, 200, 0.7); }
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            font-weight: 500;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #BBBBBB;
         }
         input {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 8px;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            color: #ffffff;
+            padding: 0.7rem;
+            margin-bottom: 0.7rem;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid #00FFC8;
+            color: #FFFFFF;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 0.9rem;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 200, 0.4);
         }
         button {
-            padding: 10px 16px;
+            padding: 0.7rem 1.2rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            margin: 5px;
+            font-size: 0.9rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         .buy-btn {
-            background: #4caf50;
+            background: #00FFC8;
+            color: #000000;
+        }
+        .buy-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .buy-btn:hover::before {
+            left: 100%;
         }
         .buy-btn:hover {
-            background: #45a049;
+            background: #FFFFFF;
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
         }
         .sell-btn {
-            background: #f44336;
+            background: #FF5252;
+            color: #FFFFFF;
+        }
+        .sell-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 82, 82, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .sell-btn:hover::before {
+            left: 100%;
         }
         .sell-btn:hover {
-            background: #d32f2f;
+            background: #FF6666;
+            box-shadow: 0 0 12px rgba(255, 82, 82, 0.6);
+            transform: translateY(-2px);
         }
         .create-btn {
-            background: #1e88e5;
+            background: #00FFC8;
+            color: #000000;
+        }
+        .create-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .create-btn:hover::before {
+            left: 100%;
         }
         .create-btn:hover {
-            background: #1565c0;
+            background: #FFFFFF;
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
         }
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin: 10px 0;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
         }
         .percent-buttons {
-            margin: 8px 0;
+            margin: 0.6rem 0;
             display: flex;
-            gap: 5px;
+            gap: 0.4rem;
         }
         .percent-buttons button {
             flex: 1;
-            padding: 8px;
-            font-size: 12px;
-            background: #2a2a2a;
-            border: 1px solid #444;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid #00FFC8;
+            color: #FFFFFF;
+            border-radius: 6px;
         }
         .percent-buttons button:hover {
-            background: #3a3a3a;
+            background: rgba(0, 255, 200, 0.1);
+            color: #00FFC8;
         }
         .status {
-            font-size: 14px;
-            color: #ff5252;
+            font-size: 0.8rem;
+            color: #FF5252;
             text-align: center;
-            padding: 12px;
+            margin-top: 0.5rem;
         }
         .balance {
-            margin: 8px 0;
-            font-size: 14px;
+            margin: 0.4rem 0;
+            font-size: 0.8rem;
             display: inline-block;
-            margin-left: 10px;
+            margin-left: 0.4rem;
+            color: #BBBBBB;
         }
         .disabled {
             opacity: 0.5;
@@ -207,95 +313,114 @@
         }
         .progress-bar {
             width: 100%;
-            background: #2a2a2a;
-            height: 18px;
+            background: rgba(20, 20, 20, 0.9);
+            height: 16px;
             border-radius: 6px;
             overflow: hidden;
-            margin-top: 8px;
+            margin-top: 0.6rem;
+            border: 1px solid #00FFC8;
         }
         .progress {
             height: 100%;
-            background: #4caf50;
+            background: #00FFC8;
             transition: width 0.3s;
         }
         .token-info {
             display: none;
         }
-        .footer {
-            margin-top: 12px;
-            font-size: 12px;
-            color: #b0b0b0;
+        footer {
+            margin-top: auto;
+            padding: 1.2rem;
             text-align: center;
-            padding: 12px;
+            color: #BBBBBB;
+            font-size: 0.8rem;
         }
-        .footer a {
-            color: #64b5f6;
+        footer a {
+            color: #00FFC8;
             text-decoration: none;
+            transition: color 0.3s ease;
         }
-        .footer a:hover {
+        footer a:hover {
+            color: #FFFFFF;
             text-decoration: underline;
         }
-        @media (max-width: 600px) {
-            .browser-bar {
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .header {
                 flex-direction: column;
-                padding: 8px;
-                height: auto;
-            }
-            .nav-buttons {
-                margin-bottom: 8px;
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-            }
-            .nav-buttons button {
-                flex: 1;
-                margin: 0 2px;
-            }
-            .address-bar {
-                width: 100%;
-                margin-top: 8px;
-            }
-            .content {
-                padding: 10px;
+                align-items: center;
+                gap: 0.8rem;
             }
             .logo {
                 width: 80px;
                 height: 40px;
             }
+            .nav-buttons button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .address-bar {
+                margin-left: 0;
+                margin-bottom: 1rem;
+            }
+            .address-bar input {
+                font-size: 0.8rem;
+            }
+            .address-bar button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .content {
+                padding: 0.8rem;
+            }
             .section {
-                padding: 10px;
+                padding: 1rem;
             }
             h2 {
-                font-size: 16px;
-            }
-            button {
-                padding: 8px 12px;
-                font-size: 12px;
+                font-size: 1.1rem;
             }
             input {
-                font-size: 12px;
+                font-size: 0.8rem;
+                padding: 0.5rem;
             }
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
+            button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .percent-buttons button {
+                font-size: 0.7rem;
+                padding: 0.4rem;
             }
             .balance {
                 display: block;
                 margin-left: 0;
+                font-size: 0.7rem;
+            }
+            .status {
+                font-size: 0.7rem;
+            }
+            footer {
+                padding: 1rem;
+                font-size: 0.7rem;
+            }
+            #digital-rain {
+                opacity: 0.4;
             }
         }
     </style>
 </head>
 <body>
+    <canvas id="digital-rain"></canvas>
     <div class="container">
-        <div class="browser-bar">
-            <img src="https://swap.woofingjace.com/image/header/logo.png" alt="JaceFun Domain Token" class="logo">
+        <div class="header">
+            <img src="https://swap.woofingjace.com/image/header/logo.png" alt="JaceFun OKX" class="logo">
             <div class="nav-buttons">
                 <button id="connectWallet">Connect Wallet</button>
-                <button id="refreshButton">Refresh</button>
             </div>
             <div class="address-bar">
-                <input type="text" id="domainInput" placeholder="Enter domain (e.g., Jace.OKX)">
+                <input type="text" id="domainInput" placeholder="Enter .OKX domain (e.g., Jace.OKX)">
                 <button id="searchButton">Search</button>
             </div>
         </div>
@@ -353,29 +478,55 @@
                 </div>
                 <div id="createDomainStatus" class="status"></div>
             </div>
-            <div class="section">
-                <h2>Create Meme Token</h2>
-                <label for="memeTokenName">Token Name:</label>
-                <input type="text" id="memeTokenName" placeholder="e.g., MyMemeCoin" disabled>
-                <label for="memeTokenSymbol">Token Symbol:</label>
-                <input type="text" id="memeTokenSymbol" placeholder="e.g., MMC" disabled>
-                <div class="action-buttons">
-                    <button id="createMemeToken" class="create-btn" onclick="createMemeToken()" disabled>Create Meme Token</button>
-                </div>
-                <div id="createMemeStatus" class="status"></div>
-            </div>
         </div>
-        <div class="footer">
-            Powered by <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank">X Layer</a> | JaceFun © 2025
-        </div>
+        <footer>
+            <p>Powered by <a href="https://x.com/WoofingJace" target="_blank">WoofingJace</a> & <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank">X Layer</a> © 2025</p>
+            <p style="margin-top: 0.5rem;">Not financial advice. Always DYOR!</p>
+        </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
     <script>
-        let web3, accounts, jaceFunContract, tokenFactoryContract, tokenContract;
+        const canvas = document.getElementById('digital-rain');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const chars = '01ABCDEFWoofingJaceOKXFun';
+        const fontSize = 12;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FFC8';
+            ctx.font = fontSize + 'px Roboto Mono';
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 50);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drops.length = 0;
+            for (let x = 0; x < canvas.width / fontSize; x++) {
+                drops[x] = 1;
+            }
+        });
+
+        let web3, accounts, jaceFunContract, tokenFactoryContract, tokenContract, nftContract;
         let currentTokenAddress = '';
 
         const jaceFunAddress = '0x4C4846cA530113C5365Ba1Bb4B09fe2f9692f9F8';
         const tokenFactoryAddress = '0xaf704a9d83859504200155eD18DE3C671d7b0ae7';
+        const nftContractAddress = '0xC3ad7bD7e434F4C1C023EbC6fe0AC4705e9518bC';
         const jaceFunABI = [
             {"inputs":[{"internalType":"address","name":"_inscriptionContract","type":"address"},{"internalType":"address","name":"_tokenFactory","type":"address"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},
             {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"launchToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},
@@ -396,6 +547,9 @@
             {"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
             {"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"stateMutability":"view","type":"function"},
             {"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"stateMutability":"view","type":"function"}
+        ];
+        const nftABI = [
+            {"constant":true,"inputs":[{"name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"name":"","type":"address"}],"stateMutability":"view","type":"function"}
         ];
 
         const xLayer = { chainId: 196, rpcUrl: 'https://rpc.xlayer.tech' };
@@ -435,11 +589,13 @@
                 accounts = await web3.eth.getAccounts();
                 jaceFunContract = new web3.eth.Contract(jaceFunABI, jaceFunAddress);
                 tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+                nftContract = new web3.eth.Contract(nftABI, nftContractAddress);
                 document.getElementById('walletStatus').innerText = `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
                 enableInputs(true);
                 await updateBalances();
+                parseUrlAndLoad();
             } catch (error) {
-                document.getElementById('walletStatus').innerText = 'Connection failed: ' + (error.message || 'Unknown error');
+                document.getElementById('walletStatus').innerText = `Connection failed: ${error.message || 'Unknown error'}`;
                 console.error('Connect wallet error:', error);
             }
         }
@@ -447,9 +603,6 @@
         function enableInputs(enabled) {
             document.getElementById('tokenId').disabled = !enabled;
             document.getElementById('createDomainToken').disabled = !enabled;
-            document.getElementById('memeTokenName').disabled = !enabled;
-            document.getElementById('memeTokenSymbol').disabled = !enabled;
-            document.getElementById('createMemeToken').disabled = !enabled;
             document.getElementById('buyAmount').disabled = !enabled;
             document.getElementById('sellAmount').disabled = !enabled;
         }
@@ -478,7 +631,7 @@
         }
 
         async function searchDomain() {
-            const domainInput = document.getElementById('domainInput').value.trim();
+            let domainInput = document.getElementById('domainInput').value.trim();
             const status = document.getElementById('status');
             if (!domainInput) {
                 status.innerText = 'Please enter a valid domain (e.g., Jace.OKX)';
@@ -486,23 +639,35 @@
                 return;
             }
             const parts = domainInput.split('.');
-            if (parts.length !== 2 || parts[1].toUpperCase() !== 'OKX') {
+            if (parts.length !== 2) {
                 status.innerText = 'Invalid domain format. Use format like Jace.OKX';
                 document.getElementById('tokenInfo').style.display = 'none';
                 return;
             }
+            domainInput = `${parts[0]}.OKX`; // Normalize to .OKX
+            document.getElementById('domainInput').value = domainInput; // Update input field
             try {
                 status.innerText = 'Searching domain...';
                 const tokenAddress = await jaceFunContract.methods.getTokenContractByDomain(domainInput).call();
+                if (tokenAddress === '0x0000000000000000000000000000000000000000') {
+                    status.innerText = 'No token found for this domain';
+                    document.getElementById('tokenInfo').style.display = 'none';
+                    currentTokenAddress = '';
+                    document.getElementById('tokenContract').value = '';
+                    window.history.replaceState({}, '', `/okxfun/`);
+                    return;
+                }
                 currentTokenAddress = tokenAddress;
                 document.getElementById('tokenContract').value = tokenAddress;
                 await fetchTokenInfo();
                 status.innerText = '';
+                window.history.replaceState({}, '', `?domain=${encodeURIComponent(domainInput)}`);
             } catch (error) {
-                status.innerText = 'Domain not found or token not launched: ' + (error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || 'Unknown reason' : error.message);
+                status.innerText = `Domain not found or token not launched: ${error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || 'Domain not registered' : error.message}`;
                 document.getElementById('tokenInfo').style.display = 'none';
                 currentTokenAddress = '';
                 document.getElementById('tokenContract').value = '';
+                window.history.replaceState({}, '', `/okxfun/`);
             }
         }
 
@@ -545,7 +710,7 @@
                 document.getElementById('tokenInfo').style.display = 'none';
                 document.getElementById('progressResult').innerText = '';
                 document.getElementById('progressBar').style.width = '0%';
-                document.getElementById('tokenDetails').innerText = 'Failed to fetch token info: ' + error.message;
+                document.getElementById('tokenDetails').innerText = `Failed to fetch token info: ${error.message}`;
                 document.getElementById('tokenBalance').innerText = 'Failed to fetch token info';
                 document.getElementById('buyAmount').disabled = true;
                 document.getElementById('sellAmount').disabled = true;
@@ -560,20 +725,27 @@
                 document.getElementById('transactionStatus').innerText = 'Please connect wallet';
                 return;
             }
-            let amount;
-            if (action === 'buy') {
-                const okbBalance = await web3.eth.getBalance(accounts[0]);
-                const balanceInOKB = Number(web3.utils.fromWei(okbBalance, 'ether'));
-                amount = (balanceInOKB * percent / 100).toFixed(4);
-                if (percent === 100) amount = (balanceInOKB - 0.001).toFixed(4);
-                document.getElementById('buyAmount').value = amount > 0 ? amount : 0;
-            } else {
-                if (!currentTokenAddress || !tokenContract) return;
-                const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
-                const balanceInTokens = Number(web3.utils.fromWei(tokenBalance, 'ether'));
-                amount = (balanceInTokens * percent / 100).toFixed(4);
-                if (percent === 100) amount = (balanceInTokens - 0.001).toFixed(4);
-                document.getElementById('sellAmount').value = amount > 0 ? amount : 0;
+            try {
+                let amount;
+                if (action === 'buy') {
+                    const okbBalance = await web3.eth.getBalance(accounts[0]);
+                    const balanceInOKB = Number(web3.utils.fromWei(okbBalance, 'ether'));
+                    amount = (balanceInOKB * percent / 100).toFixed(4);
+                    if (percent === 100) amount = (balanceInOKB - 0.001).toFixed(4);
+                    document.getElementById('buyAmount').value = amount > 0 ? amount : 0;
+                } else {
+                    if (!currentTokenAddress || !tokenContract) {
+                        document.getElementById('transactionStatus').innerText = 'No token selected';
+                        return;
+                    }
+                    const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                    const balanceInTokens = Number(web3.utils.fromWei(tokenBalance, 'ether'));
+                    amount = (balanceInTokens * percent / 100).toFixed(4);
+                    if (percent === 100) amount = (balanceInTokens - 0.001).toFixed(4);
+                    document.getElementById('sellAmount').value = amount > 0 ? amount : 0;
+                }
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = `Failed to set amount: ${error.message}`;
             }
         }
 
@@ -599,7 +771,7 @@
                 document.getElementById('transactionStatus').innerText = 'Buy successful!';
                 await fetchTokenInfo();
             } catch (error) {
-                document.getElementById('transactionStatus').innerText = 'Buy failed: ' + error.message;
+                document.getElementById('transactionStatus').innerText = `Buy failed: ${error.message}`;
             }
         }
 
@@ -625,7 +797,7 @@
                 document.getElementById('transactionStatus').innerText = 'Sell successful!';
                 await fetchTokenInfo();
             } catch (error) {
-                document.getElementById('transactionStatus').innerText = 'Sell failed: ' + error.message;
+                document.getElementById('transactionStatus').innerText = `Sell failed: ${error.message}`;
             }
         }
 
@@ -640,6 +812,12 @@
                 return;
             }
             try {
+                document.getElementById('createDomainStatus').innerText = 'Checking NFT ownership...';
+                const owner = await nftContract.methods.ownerOf(tokenId).call();
+                if (owner.toLowerCase() !== accounts[0].toLowerCase()) {
+                    document.getElementById('createDomainStatus').innerText = 'You do not hold this NFT';
+                    return;
+                }
                 document.getElementById('createDomainStatus').innerText = 'Creating domain token...';
                 const gas = await jaceFunContract.methods.launchToken(tokenId).estimateGas({ from: accounts[0] });
                 const result = await jaceFunContract.methods.launchToken(tokenId).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
@@ -650,33 +828,22 @@
                 await fetchTokenInfo();
                 await updateBalances();
             } catch (error) {
-                document.getElementById('createDomainStatus').innerText = 'Create domain token failed: ' + error.message;
+                document.getElementById('createDomainStatus').innerText = `Create failed: ${error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || 'Unknown reason' : error.message}`;
             }
         }
 
-        async function createMemeToken() {
-            if (!web3 || !accounts) {
-                document.getElementById('createMemeStatus').innerText = 'Please connect wallet';
-                return;
+        function parseUrlAndLoad() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let domain = '';
+            if (urlParams.has('domain')) {
+                domain = decodeURIComponent(urlParams.get('domain'));
             }
-            const name = document.getElementById('memeTokenName').value.trim();
-            const symbol = document.getElementById('memeTokenSymbol').value.trim();
-            if (!name || !symbol) {
-                document.getElementById('createMemeStatus').innerText = 'Please enter token name and symbol';
-                return;
-            }
-            try {
-                document.getElementById('createMemeStatus').innerText = 'Creating meme token...';
-                const gas = await tokenFactoryContract.methods.createToken(name, symbol).estimateGas({ from: accounts[0] });
-                const result = await tokenFactoryContract.methods.createToken(name, symbol).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
-                const tokenAddress = result.events.TokenCreated?.returnValues.token || result.returnValues[0] || await tokenFactoryContract.methods.tokenList(await tokenFactoryContract.methods.tokenCount().call() - 1).call();
-                document.getElementById('createMemeStatus').innerText = `Meme token created: ${tokenAddress}`;
-                document.getElementById('tokenContract').value = tokenAddress;
-                currentTokenAddress = tokenAddress;
-                await fetchTokenInfo();
-                await updateBalances();
-            } catch (error) {
-                document.getElementById('createMemeStatus').innerText = 'Create meme token failed: ' + error.message;
+            if (domain) {
+                const parts = domain.split('.');
+                if (parts.length === 2 && parts[1].toUpperCase() === 'OKX') {
+                    document.getElementById('domainInput').value = `${parts[0]}.OKX`;
+                    searchDomain();
+                }
             }
         }
 
@@ -692,9 +859,14 @@
             });
             connectWalletButton.addEventListener('click', connectWallet);
             refreshButton.addEventListener('click', () => {
-                if (document.getElementById('tokenContract').value) fetchTokenInfo();
-                else searchDomain();
+                if (document.getElementById('tokenContract').value) {
+                    fetchTokenInfo();
+                } else {
+                    searchDomain();
+                }
             });
+
+            parseUrlAndLoad();
         });
     </script>
 </body>
