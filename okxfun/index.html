@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JaceFun OKX: Create, trade, and manage .OKX domain-based tokens on X Layer blockchain. Connect with MetaMask to explore Jace.OKX and more.">
+    <meta name="keywords" content="JaceFun, OKX, domain token, X Layer, blockchain, NFT, Web3, cryptocurrency, WoofingJace">
+    <meta name="robots" content="index, follow">
+    <title>JaceFun OKX - Domain Token Trading</title>
+    <base href="/okxfun/">
+    <link rel="icon" href="https://swap.woofingjace.com/image/header/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background: #000000;
+            color: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+        #digital-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: 1.5rem;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo {
+            width: 100px;
+            height: 50px;
+            object-fit: contain;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .nav-buttons button {
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00FFC8;
+            border-radius: 8px;
+            padding: 0.7rem 1.2rem;
+            color: #FFFFFF;
+            font-size: 0.9rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-buttons button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .nav-buttons button:hover::before {
+            left: 100%;
+        }
+        .nav-buttons button:hover {
+            background: #00FFC8;
+            color: #000000;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
+        }
+        .nav-buttons button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .address-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00FFC8;
+            border-radius: 10px;
+            padding: 0.4rem;
+            margin-left: 1rem;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.2);
+        }
+        .address-bar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            background: transparent;
+            color: #FFFFFF;
+            transition: border 0.3s ease;
+        }
+        .address-bar input:focus {
+            border-bottom: 1px solid #00FFC8;
+        }
+        .address-bar input::placeholder {
+            color: #BBBBBB;
+        }
+        .address-bar button {
+            background: #00FFC8;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1.2rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+        }
+        .address-bar button:hover {
+            background: #FFFFFF;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
+        }
+        .content {
+            flex: 1;
+            width: 100%;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        .section {
+            width: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.2);
+        }
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00FFC8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.8rem;
+            animation: neon-glow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes neon-glow {
+            from { text-shadow: 0 0 5px rgba(0, 255, 200, 0.5); }
+            to { text-shadow: 0 0 12px rgba(0, 255, 200, 0.9), 0 0 20px rgba(0, 255, 200, 0.7); }
+        }
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #BBBBBB;
+        }
+        input {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 0.7rem;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid #00FFC8;
+            color: #FFFFFF;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 200, 0.4);
+        }
+        button {
+            padding: 0.7rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .buy-btn {
+            background: #00FFC8;
+            color: #000000;
+        }
+        .buy-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .buy-btn:hover::before {
+            left: 100%;
+        }
+        .buy-btn:hover {
+            background: #FFFFFF;
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
+        }
+        .sell-btn {
+            background: #FF5252;
+            color: #FFFFFF;
+        }
+        .sell-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 82, 82, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .sell-btn:hover::before {
+            left: 100%;
+        }
+        .sell-btn:hover {
+            background: #FF6666;
+            box-shadow: 0 0 12px rgba(255, 82, 82, 0.6);
+            transform: translateY(-2px);
+        }
+        .create-btn {
+            background: #00FFC8;
+            color: #000000;
+        }
+        .create-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .create-btn:hover::before {
+            left: 100%;
+        }
+        .create-btn:hover {
+            background: #FFFFFF;
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+        .percent-buttons {
+            margin: 0.6rem 0;
+            display: flex;
+            gap: 0.4rem;
+        }
+        .percent-buttons button {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid #00FFC8;
+            color: #FFFFFF;
+            border-radius: 6px;
+        }
+        .percent-buttons button:hover {
+            background: rgba(0, 255, 200, 0.1);
+            color: #00FFC8;
+        }
+        .status {
+            font-size: 0.8rem;
+            color: #FF5252;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        .balance {
+            margin: 0.4rem 0;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-left: 0.4rem;
+            color: #BBBBBB;
+        }
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .progress-bar {
+            width: 100%;
+            background: rgba(20, 20, 20, 0.9);
+            height: 16px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 0.6rem;
+            border: 1px solid #00FFC8;
+        }
+        .progress {
+            height: 100%;
+            background: #00FFC8;
+            transition: width 0.3s;
+        }
+        .token-info {
+            display: none;
+        }
+        footer {
+            margin-top: auto;
+            padding: 1.2rem;
+            text-align: center;
+            color: #BBBBBB;
+            font-size: 0.8rem;
+        }
+        footer a {
+            color: #00FFC8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: #FFFFFF;
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .header {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.8rem;
+            }
+            .logo {
+                width: 80px;
+                height: 40px;
+            }
+            .nav-buttons button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .address-bar {
+                margin-left: 0;
+                margin-bottom: 1rem;
+            }
+            .address-bar input {
+                font-size: 0.8rem;
+            }
+            .address-bar button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .content {
+                padding: 0.8rem;
+            }
+            .section {
+                padding: 1rem;
+            }
+            h2 {
+                font-size: 1.1rem;
+            }
+            input {
+                font-size: 0.8rem;
+                padding: 0.5rem;
+            }
+            button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .percent-buttons button {
+                font-size: 0.7rem;
+                padding: 0.4rem;
+            }
+            .balance {
+                display: block;
+                margin-left: 0;
+                font-size: 0.7rem;
+            }
+            .status {
+                font-size: 0.7rem;
+            }
+            footer {
+                padding: 1rem;
+                font-size: 0.7rem;
+            }
+            #digital-rain {
+                opacity: 0.4;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="digital-rain"></canvas>
+    <div class="container">
+        <div class="header">
+            <img src="https://swap.woofingjace.com/image/header/logo.png" alt="JaceFun OKX" class="logo">
+            <div class="nav-buttons">
+                <button id="connectWallet">Connect Wallet</button>
+            </div>
+            <div class="address-bar">
+                <input type="text" id="domainInput" placeholder="Enter .OKX domain (e.g., Jace.OKX)">
+                <button id="searchButton">Search</button>
+            </div>
+        </div>
+        <div class="content">
+            <div id="status" class="status"></div>
+            <div class="section">
+                <h2>Wallet Status</h2>
+                <div id="walletStatus" class="status">Not Connected</div>
+            </div>
+            <div class="section">
+                <h2>Token Operations</h2>
+                <label for="tokenContract">Token Contract Address:</label>
+                <input type="text" id="tokenContract" placeholder="Token address will be populated after search" readonly>
+                <div id="tokenInfo" class="token-info">
+                    <div id="tokenDetails" class="status"></div>
+                    <div id="progressResult" class="status"></div>
+                    <div class="progress-bar"><div id="progressBar" class="progress" style="width: 0%;"></div></div>
+                    <div class="section">
+                        <h2>Buy Tokens</h2>
+                        <label for="buyAmount">Amount (OKB): <span id="okbBalance" class="balance"></span></label>
+                        <input type="number" id="buyAmount" placeholder="0.0" step="0.0001" disabled>
+                        <div class="percent-buttons">
+                            <button onclick="setPercent(25, 'buy')" disabled>25%</button>
+                            <button onclick="setPercent(50, 'buy')" disabled>50%</button>
+                            <button onclick="setPercent(75, 'buy')" disabled>75%</button>
+                            <button onclick="setPercent(100, 'buy')" disabled>Max</button>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="buyButton" class="buy-btn" onclick="buyTokens()" disabled>Buy Tokens</button>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>Sell Tokens</h2>
+                        <label for="sellAmount">Amount (Tokens): <span id="tokenBalance" class="balance"></span></label>
+                        <input type="number" id="sellAmount" placeholder="0.0" step="0.0001" disabled>
+                        <div class="percent-buttons">
+                            <button onclick="setPercent(25, 'sell')" disabled>25%</button>
+                            <button onclick="setPercent(50, 'sell')" disabled>50%</button>
+                            <button onclick="setPercent(75, 'sell')" disabled>75%</button>
+                            <button onclick="setPercent(100, 'sell')" disabled>Max</button>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="sellButton" class="sell-btn" onclick="sellTokens()" disabled>Sell Tokens</button>
+                        </div>
+                    </div>
+                    <div id="transactionStatus" class="status"></div>
+                </div>
+            </div>
+            <div class="section">
+                <h2>Create Domain Token</h2>
+                <label for="tokenId">NFT Token ID:</label>
+                <input type="number" id="tokenId" placeholder="Enter NFT Token ID" disabled>
+                <div class="action-buttons">
+                    <button id="createDomainToken" class="create-btn" onclick="createDomainToken()" disabled>Create Domain Token</button>
+                </div>
+                <div id="createDomainStatus" class="status"></div>
+            </div>
+        </div>
+        <footer>
+            <p>Powered by <a href="https://x.com/WoofingJace" target="_blank">WoofingJace</a> & <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank">X Layer</a> © 2025</p>
+            <p style="margin-top: 0.5rem;">Not financial advice. Always DYOR!</p>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script>
+        const canvas = document.getElementById('digital-rain');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const chars = '01ABCDEFWoofingJaceOKXFun';
+        const fontSize = 12;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FFC8';
+            ctx.font = fontSize + 'px Roboto Mono';
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 50);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drops.length = 0;
+            for (let x = 0; x < canvas.width / fontSize; x++) {
+                drops[x] = 1;
+            }
+        });
+
+        let web3, accounts, jaceFunContract, tokenFactoryContract, tokenContract, nftContract;
+        let currentTokenAddress = '';
+
+        const jaceFunAddress = '0x4C4846cA530113C5365Ba1Bb4B09fe2f9692f9F8';
+        const tokenFactoryAddress = '0xaf704a9d83859504200155eD18DE3C671d7b0ae7';
+        const nftContractAddress = '0xC3ad7bD7e434F4C1C023EbC6fe0AC4705e9518bC';
+        const jaceFunABI = [
+            {"inputs":[{"internalType":"address","name":"_inscriptionContract","type":"address"},{"internalType":"address","name":"_tokenFactory","type":"address"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"launchToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getTokenContractByTokenId","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"string","name":"domain","type":"string"}],"name":"getTokenContractByDomain","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"tokenContract","type":"address"}],"name":"getTokenInfoByContract","outputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"domain","type":"string"}],"stateMutability":"view","type":"function"}
+        ];
+        const tokenFactoryABI = [
+            {"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"}],"name":"createToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"tokenAddress","type":"address"}],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"sellTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"collateral","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"tokens","outputs":[{"internalType":"enum TokenFactory.TokenState","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"FUNDING_GOAL","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}
+        ];
+        const tokenABI = [
+            {"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"},
+            {"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"stateMutability":"view","type":"function"}
+        ];
+        const nftABI = [
+            {"constant":true,"inputs":[{"name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"name":"","type":"address"}],"stateMutability":"view","type":"function"}
+        ];
+
+        const xLayer = { chainId: 196, rpcUrl: 'https://rpc.xlayer.tech' };
+
+        async function connectWallet() {
+            if (!window.ethereum) {
+                document.getElementById('walletStatus').innerText = 'Please install MetaMask';
+                return;
+            }
+            try {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const chainId = Number(await web3.eth.getChainId());
+                if (chainId !== 196) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0xc4' }]
+                        });
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: '0xc4',
+                                    chainName: 'X Layer',
+                                    rpcUrls: ['https://rpc.xlayer.tech'],
+                                    nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
+                                    blockExplorerUrls: ['https://www.okx.com/explorer/xlayer']
+                                }]
+                            });
+                        } else {
+                            throw switchError;
+                        }
+                    }
+                }
+                accounts = await web3.eth.getAccounts();
+                jaceFunContract = new web3.eth.Contract(jaceFunABI, jaceFunAddress);
+                tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+                nftContract = new web3.eth.Contract(nftABI, nftContractAddress);
+                document.getElementById('walletStatus').innerText = `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+                enableInputs(true);
+                await updateBalances();
+                parseUrlAndLoad();
+            } catch (error) {
+                document.getElementById('walletStatus').innerText = `Connection failed: ${error.message || 'Unknown error'}`;
+                console.error('Connect wallet error:', error);
+            }
+        }
+
+        function enableInputs(enabled) {
+            document.getElementById('tokenId').disabled = !enabled;
+            document.getElementById('createDomainToken').disabled = !enabled;
+            document.getElementById('buyAmount').disabled = !enabled;
+            document.getElementById('sellAmount').disabled = !enabled;
+        }
+
+        async function updateBalances() {
+            if (!web3 || !accounts) {
+                document.getElementById('okbBalance').innerText = 'Please connect wallet';
+                document.getElementById('tokenBalance').innerText = 'Please connect wallet';
+                return;
+            }
+            try {
+                const okbBalance = await web3.eth.getBalance(accounts[0]);
+                document.getElementById('okbBalance').innerText = `Balance: ${web3.utils.fromWei(okbBalance, 'ether')} OKB`;
+                if (currentTokenAddress && web3.utils.isAddress(currentTokenAddress)) {
+                    tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                    const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                    const symbol = await tokenContract.methods.symbol().call();
+                    document.getElementById('tokenBalance').innerText = `Balance: ${web3.utils.fromWei(tokenBalance, 'ether')} ${symbol}`;
+                } else {
+                    document.getElementById('tokenBalance').innerText = 'Please search a domain';
+                }
+            } catch (error) {
+                document.getElementById('okbBalance').innerText = 'Failed to fetch OKB balance';
+                document.getElementById('tokenBalance').innerText = 'Failed to fetch token balance';
+            }
+        }
+
+        async function searchDomain() {
+            let domainInput = document.getElementById('domainInput').value.trim();
+            const status = document.getElementById('status');
+            if (!domainInput) {
+                status.innerText = 'Please enter a valid domain (e.g., Jace.OKX)';
+                document.getElementById('tokenInfo').style.display = 'none';
+                return;
+            }
+            const parts = domainInput.split('.');
+            if (parts.length !== 2) {
+                status.innerText = 'Invalid domain format. Use format like Jace.OKX';
+                document.getElementById('tokenInfo').style.display = 'none';
+                return;
+            }
+            domainInput = `${parts[0]}.OKX`; // Normalize to .OKX
+            document.getElementById('domainInput').value = domainInput; // Update input field
+            try {
+                status.innerText = 'Searching domain...';
+                const tokenAddress = await jaceFunContract.methods.getTokenContractByDomain(domainInput).call();
+                if (tokenAddress === '0x0000000000000000000000000000000000000000') {
+                    status.innerText = 'No token found for this domain';
+                    document.getElementById('tokenInfo').style.display = 'none';
+                    currentTokenAddress = '';
+                    document.getElementById('tokenContract').value = '';
+                    window.history.replaceState({}, '', `/okxfun/`);
+                    return;
+                }
+                currentTokenAddress = tokenAddress;
+                document.getElementById('tokenContract').value = tokenAddress;
+                await fetchTokenInfo();
+                status.innerText = '';
+                window.history.replaceState({}, '', `?domain=${encodeURIComponent(domainInput)}`);
+            } catch (error) {
+                status.innerText = `Domain not found or token not launched: ${error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || 'Domain not registered' : error.message}`;
+                document.getElementById('tokenInfo').style.display = 'none';
+                currentTokenAddress = '';
+                document.getElementById('tokenContract').value = '';
+                window.history.replaceState({}, '', `/okxfun/`);
+            }
+        }
+
+        async function fetchTokenInfo() {
+            if (!currentTokenAddress || !web3.utils.isAddress(currentTokenAddress)) {
+                document.getElementById('tokenInfo').style.display = 'none';
+                document.getElementById('progressResult').innerText = '';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('buyAmount').disabled = true;
+                document.getElementById('sellAmount').disabled = true;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = true);
+                document.getElementById('buyButton').disabled = true;
+                document.getElementById('sellButton').disabled = true;
+                document.getElementById('tokenBalance').innerText = 'Please search a domain';
+                return;
+            }
+            try {
+                tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                const name = await tokenContract.methods.name().call();
+                const symbol = await tokenContract.methods.symbol().call();
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                const collateral = await tokenFactoryContract.methods.collateral(currentTokenAddress).call();
+                const fundingGoal = await tokenFactoryContract.methods.FUNDING_GOAL().call();
+                const progress = (Number(collateral) / Number(fundingGoal)) * 100;
+
+                document.getElementById('tokenDetails').innerText = `Token: ${name} (${symbol})`;
+                document.getElementById('progressResult').innerText = `Funding Progress: ${progress.toFixed(2)}% (State: ${['Not Created', 'Funding', 'Trading'][tokenState]})`;
+                document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
+                document.getElementById('tokenInfo').style.display = 'block';
+
+                const isFunding = tokenState == 1 && accounts;
+                document.getElementById('buyAmount').disabled = !isFunding;
+                document.getElementById('sellAmount').disabled = !isFunding;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = !isFunding);
+                document.getElementById('buyButton').disabled = !isFunding;
+                document.getElementById('sellButton').disabled = !isFunding;
+
+                await updateBalances();
+            } catch (error) {
+                document.getElementById('tokenInfo').style.display = 'none';
+                document.getElementById('progressResult').innerText = '';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('tokenDetails').innerText = `Failed to fetch token info: ${error.message}`;
+                document.getElementById('tokenBalance').innerText = 'Failed to fetch token info';
+                document.getElementById('buyAmount').disabled = true;
+                document.getElementById('sellAmount').disabled = true;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = true);
+                document.getElementById('buyButton').disabled = true;
+                document.getElementById('sellButton').disabled = true;
+            }
+        }
+
+        async function setPercent(percent, action) {
+            if (!web3 || !accounts) {
+                document.getElementById('transactionStatus').innerText = 'Please connect wallet';
+                return;
+            }
+            try {
+                let amount;
+                if (action === 'buy') {
+                    const okbBalance = await web3.eth.getBalance(accounts[0]);
+                    const balanceInOKB = Number(web3.utils.fromWei(okbBalance, 'ether'));
+                    amount = (balanceInOKB * percent / 100).toFixed(4);
+                    if (percent === 100) amount = (balanceInOKB - 0.001).toFixed(4);
+                    document.getElementById('buyAmount').value = amount > 0 ? amount : 0;
+                } else {
+                    if (!currentTokenAddress || !tokenContract) {
+                        document.getElementById('transactionStatus').innerText = 'No token selected';
+                        return;
+                    }
+                    const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                    const balanceInTokens = Number(web3.utils.fromWei(tokenBalance, 'ether'));
+                    amount = (balanceInTokens * percent / 100).toFixed(4);
+                    if (percent === 100) amount = (balanceInTokens - 0.001).toFixed(4);
+                    document.getElementById('sellAmount').value = amount > 0 ? amount : 0;
+                }
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = `Failed to set amount: ${error.message}`;
+            }
+        }
+
+        async function buyTokens() {
+            if (!web3 || !accounts || !currentTokenAddress) {
+                document.getElementById('transactionStatus').innerText = 'Please connect wallet and select a token';
+                return;
+            }
+            const amount = document.getElementById('buyAmount').value;
+            if (!amount || amount <= 0) {
+                document.getElementById('transactionStatus').innerText = 'Please enter a valid amount';
+                return;
+            }
+            try {
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                if (tokenState != 1) {
+                    document.getElementById('transactionStatus').innerText = 'Token is not in funding state';
+                    return;
+                }
+                document.getElementById('transactionStatus').innerText = 'Buying tokens...';
+                const gas = await tokenFactoryContract.methods.buyTokens(currentTokenAddress).estimateGas({ from: accounts[0], value: web3.utils.toWei(amount, 'ether') });
+                await tokenFactoryContract.methods.buyTokens(currentTokenAddress).send({ from: accounts[0], value: web3.utils.toWei(amount, 'ether'), gas: Math.floor(gas * 1.2) });
+                document.getElementById('transactionStatus').innerText = 'Buy successful!';
+                await fetchTokenInfo();
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = `Buy failed: ${error.message}`;
+            }
+        }
+
+        async function sellTokens() {
+            if (!web3 || !accounts || !currentTokenAddress) {
+                document.getElementById('transactionStatus').innerText = 'Please connect wallet and select a token';
+                return;
+            }
+            const amount = document.getElementById('sellAmount').value;
+            if (!amount || amount <= 0) {
+                document.getElementById('transactionStatus').innerText = 'Please enter a valid amount';
+                return;
+            }
+            try {
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                if (tokenState != 1) {
+                    document.getElementById('transactionStatus').innerText = 'Token is not in funding state';
+                    return;
+                }
+                document.getElementById('transactionStatus').innerText = 'Selling tokens...';
+                const gas = await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).estimateGas({ from: accounts[0] });
+                await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+                document.getElementById('transactionStatus').innerText = 'Sell successful!';
+                await fetchTokenInfo();
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = `Sell failed: ${error.message}`;
+            }
+        }
+
+        async function createDomainToken() {
+            if (!web3 || !accounts) {
+                document.getElementById('createDomainStatus').innerText = 'Please connect wallet';
+                return;
+            }
+            const tokenId = document.getElementById('tokenId').value;
+            if (!tokenId || tokenId <= 0) {
+                document.getElementById('createDomainStatus').innerText = 'Please enter a valid NFT Token ID';
+                return;
+            }
+            try {
+                document.getElementById('createDomainStatus').innerText = 'Checking NFT ownership...';
+                const owner = await nftContract.methods.ownerOf(tokenId).call();
+                if (owner.toLowerCase() !== accounts[0].toLowerCase()) {
+                    document.getElementById('createDomainStatus').innerText = 'You do not hold this NFT';
+                    return;
+                }
+                document.getElementById('createDomainStatus').innerText = 'Creating domain token...';
+                const gas = await jaceFunContract.methods.launchToken(tokenId).estimateGas({ from: accounts[0] });
+                const result = await jaceFunContract.methods.launchToken(tokenId).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+                const tokenAddress = result.events.TokenLaunched.returnValues.tokenContract;
+                document.getElementById('createDomainStatus').innerText = `Domain token created: ${tokenAddress}`;
+                document.getElementById('tokenContract').value = tokenAddress;
+                currentTokenAddress = tokenAddress;
+                await fetchTokenInfo();
+                await updateBalances();
+            } catch (error) {
+                document.getElementById('createDomainStatus').innerText = `Create failed: ${error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || 'Unknown reason' : error.message}`;
+            }
+        }
+
+        function parseUrlAndLoad() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let domain = '';
+            if (urlParams.has('domain')) {
+                domain = decodeURIComponent(urlParams.get('domain'));
+            }
+            if (domain) {
+                const parts = domain.split('.');
+                if (parts.length === 2 && parts[1].toUpperCase() === 'OKX') {
+                    document.getElementById('domainInput').value = `${parts[0]}.OKX`;
+                    searchDomain();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const domainInput = document.getElementById('domainInput');
+            const searchButton = document.getElementById('searchButton');
+            const connectWalletButton = document.getElementById('connectWallet');
+            const refreshButton = document.getElementById('refreshButton');
+
+            searchButton.addEventListener('click', searchDomain);
+            domainInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchDomain();
+            });
+            connectWalletButton.addEventListener('click', connectWallet);
+            refreshButton.addEventListener('click', () => {
+                if (document.getElementById('tokenContract').value) {
+                    fetchTokenInfo();
+                } else {
+                    searchDomain();
+                }
+            });
+
+            parseUrlAndLoad();
+        });
+    </script>
+</body>
+</html>
