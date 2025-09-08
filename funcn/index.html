@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JaceFun OKX：在X Layer区块链上创建、交易和管理.OKX域名代币。连接MetaMask以探索Jace.OKX等内容。">
+    <meta name="keywords" content="JaceFun, OKX, 域名代币, X Layer, 区块链, NFT, Web3, 加密货币, WoofingJace">
+    <meta name="robots" content="index, follow">
+    <title>JaceFun OKX - 域名代币交易</title>
+    <base href="/funcn/">
+    <link rel="icon" href="https://swap.woofingjace.com/image/header/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background: #000000;
+            color: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+        #digital-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: 1.5rem;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo {
+            width: 100px;
+            height: 50px;
+            object-fit: contain;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .nav-buttons button {
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00FFC8;
+            border-radius: 8px;
+            padding: 0.7rem 1.2rem;
+            color: #FFFFFF;
+            font-size: 0.9rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-buttons button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .nav-buttons button:hover::before {
+            left: 100%;
+        }
+        .nav-buttons button:hover {
+            background: #00FFC8;
+            color: #000000;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
+        }
+        .nav-buttons button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .address-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00FFC8;
+            border-radius: 10px;
+            padding: 0.4rem;
+            margin-left: 1rem;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.2);
+        }
+        .address-bar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            background: transparent;
+            color: #FFFFFF;
+            transition: border 0.3s ease;
+        }
+        .address-bar input:focus {
+            border-bottom: 1px solid #00FFC8;
+        }
+        .address-bar input::placeholder {
+            color: #BBBBBB;
+        }
+        .address-bar button {
+            background: #00FFC8;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1.2rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+        }
+        .address-bar button:hover {
+            background: #FFFFFF;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
+        }
+        .content {
+            flex: 1;
+            width: 100%;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        .section {
+            width: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.2);
+        }
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00FFC8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.8rem;
+            animation: neon-glow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes neon-glow {
+            from { text-shadow: 0 0 5px rgba(0, 255, 200, 0.5); }
+            to { text-shadow: 0 0 12px rgba(0, 255, 200, 0.9), 0 0 20px rgba(0, 255, 200, 0.7); }
+        }
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #BBBBBB;
+        }
+        input {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 0.7rem;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid #00FFC8;
+            color: #FFFFFF;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 200, 0.4);
+        }
+        button {
+            padding: 0.7rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .buy-btn {
+            background: #00FFC8;
+            color: #000000;
+        }
+        .buy-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .buy-btn:hover::before {
+            left: 100%;
+        }
+        .buy-btn:hover {
+            background: #FFFFFF;
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
+        }
+        .sell-btn {
+            background: #FF5252;
+            color: #FFFFFF;
+        }
+        .sell-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 82, 82, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .sell-btn:hover::before {
+            left: 100%;
+        }
+        .sell-btn:hover {
+            background: #FF6666;
+            box-shadow: 0 0 12px rgba(255, 82, 82, 0.6);
+            transform: translateY(-2px);
+        }
+        .create-btn {
+            background: #00FFC8;
+            color: #000000;
+        }
+        .create-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+            transition: left 0.4s ease;
+        }
+        .create-btn:hover::before {
+            left: 100%;
+        }
+        .create-btn:hover {
+            background: #FFFFFF;
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.6);
+            transform: translateY(-2px);
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+        .percent-buttons {
+            margin: 0.6rem 0;
+            display: flex;
+            gap: 0.4rem;
+        }
+        .percent-buttons button {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid #00FFC8;
+            color: #FFFFFF;
+            border-radius: 6px;
+        }
+        .percent-buttons button:hover {
+            background: rgba(0, 255, 200, 0.1);
+            color: #00FFC8;
+        }
+        .status {
+            font-size: 0.8rem;
+            color: #FF5252;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        .balance {
+            margin: 0.4rem 0;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-left: 0.4rem;
+            color: #BBBBBB;
+        }
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .progress-bar {
+            width: 100%;
+            background: rgba(20, 20, 20, 0.9);
+            height: 16px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 0.6rem;
+            border: 1px solid #00FFC8;
+        }
+        .progress {
+            height: 100%;
+            background: #00FFC8;
+            transition: width 0.3s;
+        }
+        .token-info {
+            display: none;
+        }
+        .token-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .token-card {
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00FFC8;
+            border-radius: 8px;
+            padding: 1rem;
+            width: calc(33.33% - 0.67rem);
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .token-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 200, 0.4);
+        }
+        .token-card h3 {
+            font-size: 1rem;
+            color: #00FFC8;
+            margin-bottom: 0.5rem;
+        }
+        .token-card p {
+            font-size: 0.8rem;
+            color: #BBBBBB;
+            margin-bottom: 0.3rem;
+        }
+        footer {
+            margin-top: auto;
+            padding: 1.2rem;
+            text-align: center;
+            color: #BBBBBB;
+            font-size: 0.8rem;
+        }
+        footer a {
+            color: #00FFC8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: #FFFFFF;
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .header {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.8rem;
+            }
+            .logo {
+                width: 80px;
+                height: 40px;
+            }
+            .nav-buttons button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .address-bar {
+                margin-left: 0;
+                margin-bottom: 1rem;
+            }
+            .address-bar input {
+                font-size: 0.8rem;
+            }
+            .address-bar button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .content {
+                padding: 0.8rem;
+            }
+            .section {
+                padding: 1rem;
+            }
+            h2 {
+                font-size: 1.1rem;
+            }
+            input {
+                font-size: 0.8rem;
+                padding: 0.5rem;
+            }
+            button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .percent-buttons button {
+                font-size: 0.7rem;
+                padding: 0.4rem;
+            }
+            .balance {
+                display: block;
+                margin-left: 0;
+                font-size: 0.7rem;
+            }
+            .status {
+                font-size: 0.7rem;
+            }
+            .token-card {
+                width: 100%;
+            }
+            footer {
+                padding: 1rem;
+                font-size: 0.7rem;
+            }
+            #digital-rain {
+                opacity: 0.4;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="digital-rain"></canvas>
+    <div class="container">
+        <div class="header">
+            <img src="https://swap.woofingjace.com/image/header/logo.png" alt="JaceFun OKX" class="logo">
+            <div class="nav-buttons">
+                <button id="connectWallet">连接钱包</button>
+            </div>
+            <div class="address-bar">
+                <input type="text" id="contractInput" placeholder="输入代币合约地址（例如：0x...）">
+                <button id="searchButton">搜索</button>
+            </div>
+        </div>
+        <div class="content">
+            <div id="status" class="status"></div>
+            <div class="section">
+                <h2>钱包状态</h2>
+                <div id="walletStatus" class="status">未连接</div>
+            </div>
+            <div class="section">
+                <h2>代币列表</h2>
+                <div id="tokenList" class="token-list"></div>
+            </div>
+            <div class="section">
+                <h2>代币操作</h2>
+                <label for="tokenContract">代币合约地址：</label>
+                <input type="text" id="tokenContract" placeholder="搜索后将自动填充代币地址" readonly>
+                <div id="tokenInfo" class="token-info">
+                    <div id="tokenDetails" class="status"></div>
+                    <div id="progressResult" class="status"></div>
+                    <div class="progress-bar"><div id="progressBar" class="progress" style="width: 0%;"></div></div>
+                    <div class="section">
+                        <h2>购买代币</h2>
+                        <label for="buyAmount">金额（OKB）：<span id="okbBalance" class="balance"></span></label>
+                        <input type="number" id="buyAmount" placeholder="0.0" step="0.0001" disabled>
+                        <div class="percent-buttons">
+                            <button onclick="setPercent(25, 'buy')" disabled>25%</button>
+                            <button onclick="setPercent(50, 'buy')" disabled>50%</button>
+                            <button onclick="setPercent(75, 'buy')" disabled>75%</button>
+                            <button onclick="setPercent(100, 'buy')" disabled>最大</button>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="buyButton" class="buy-btn" onclick="buyTokens()" disabled>购买代币</button>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>出售代币</h2>
+                        <label for="sellAmount">金额（代币）：<span id="tokenBalance" class="balance"></span></label>
+                        <input type="number" id="sellAmount" placeholder="0.0" step="0.0001" disabled>
+                        <div class="percent-buttons">
+                            <button onclick="setPercent(25, 'sell')" disabled>25%</button>
+                            <button onclick="setPercent(50, 'sell')" disabled>50%</button>
+                            <button onclick="setPercent(75, 'sell')" disabled>75%</button>
+                            <button onclick="setPercent(100, 'sell')" disabled>最大</button>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="sellButton" class="sell-btn" onclick="sellTokens()" disabled>出售代币</button>
+                        </div>
+                    </div>
+                    <div id="transactionStatus" class="status"></div>
+                </div>
+            </div>
+            <div class="section">
+                <h2>创建迷因代币</h2>
+                <label for="tokenName">代币名称：</label>
+                <input type="text" id="tokenName" placeholder="输入代币名称">
+                <label for="tokenSymbol">代币符号：</label>
+                <input type="text" id="tokenSymbol" placeholder="输入代币符号">
+                <div class="action-buttons">
+                    <button id="createToken" class="create-btn" onclick="createToken()" disabled>创建代币</button>
+                </div>
+                <div id="createTokenStatus" class="status"></div>
+            </div>
+        </div>
+        <footer>
+            <p>由 <a href="https://x.com/WoofingJace" target="_blank">WoofingJace</a> 和 <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank">X Layer</a> 提供支持 © 2025</p>
+            <p style="margin-top: 0.5rem;">非金融建议，请自行研究！</p>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script>
+        const canvas = document.getElementById('digital-rain');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const chars = '01ABCDEFWoofingJacefuncn';
+        const fontSize = 12;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FFC8';
+            ctx.font = fontSize + 'px Roboto Mono';
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 50);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drops.length = 0;
+            for (let x = 0; x < canvas.width / fontSize; x++) {
+                drops[x] = 1;
+            }
+        });
+
+        let web3, accounts, tokenFactoryContract, tokenContract;
+        let currentTokenAddress = '';
+
+        const tokenFactoryAddress = '0xaf704a9d83859504200155eD18DE3C671d7b0ae7';
+        const tokenFactoryABI = [
+            {
+                "inputs": [
+                    {"internalType": "string", "name": "name", "type": "string"},
+                    {"internalType": "string", "name": "symbol", "type": "string"}
+                ],
+                "name": "createToken",
+                "outputs": [{"internalType": "address", "name": "", "type": "address"}],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "address", "name": "tokenAddress", "type": "address"}],
+                "name": "buyTokens",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {"internalType": "address", "name": "tokenAddress", "type": "address"},
+                    {"internalType": "uint256", "name": "amount", "type": "uint256"}
+                ],
+                "name": "sellTokens",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "address", "name": "", "type": "address"}],
+                "name": "collateral",
+                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "address", "name": "", "type": "address"}],
+                "name": "tokens",
+                "outputs": [{"internalType": "enum TokenFactory.TokenState", "name": "", "type": "uint8"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "FUNDING_GOAL",
+                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "name": "tokenList",
+                "outputs": [{"internalType": "address", "name": "", "type": "address"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "tokenCount",
+                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        const tokenABI = [
+            {
+                "constant": true,
+                "inputs": [{"name": "_owner", "type": "address"}],
+                "name": "balanceOf",
+                "outputs": [{"name": "balance", "type": "uint256"}],
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "totalSupply",
+                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "name",
+                "outputs": [{"name": "", "type": "string"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "symbol",
+                "outputs": [{"name": "", "type": "string"}],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        const xLayer = { chainId: 196, rpcUrl: 'https://rpc.xlayer.tech' };
+
+        async function connectWallet() {
+            if (!window.ethereum) {
+                document.getElementById('walletStatus').innerText = '请安装MetaMask';
+                return;
+            }
+            try {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const chainId = Number(await web3.eth.getChainId());
+                if (chainId !== 196) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0xc4' }]
+                        });
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: '0xc4',
+                                    chainName: 'X Layer',
+                                    rpcUrls: ['https://rpc.xlayer.tech'],
+                                    nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
+                                    blockExplorerUrls: ['https://www.okx.com/explorer/xlayer']
+                                }]
+                            });
+                        } else {
+                            throw switchError;
+                        }
+                    }
+                }
+                accounts = await web3.eth.getAccounts();
+                tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+                document.getElementById('walletStatus').innerText = `已连接: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+                enableInputs(true);
+                await updateBalances();
+                await fetchTokenList();
+            } catch (error) {
+                document.getElementById('walletStatus').innerText = `连接失败: ${error.message || '未知错误'}`;
+                console.error('Connect wallet error:', error);
+            }
+        }
+
+        function enableInputs(enabled) {
+            document.getElementById('tokenName').disabled = !enabled;
+            document.getElementById('tokenSymbol').disabled = !enabled;
+            document.getElementById('createToken').disabled = !enabled;
+            document.getElementById('buyAmount').disabled = !enabled;
+            document.getElementById('sellAmount').disabled = !enabled;
+        }
+
+        async function updateBalances() {
+            if (!web3 || !accounts) {
+                document.getElementById('okbBalance').innerText = '请连接钱包';
+                document.getElementById('tokenBalance').innerText = '请连接钱包';
+                return;
+            }
+            try {
+                const okbBalance = await web3.eth.getBalance(accounts[0]);
+                document.getElementById('okbBalance').innerText = `余额: ${web3.utils.fromWei(okbBalance, 'ether')} OKB`;
+                if (currentTokenAddress && web3.utils.isAddress(currentTokenAddress)) {
+                    tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                    const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                    const symbol = await tokenContract.methods.symbol().call();
+                    document.getElementById('tokenBalance').innerText = `余额: ${web3.utils.fromWei(tokenBalance, 'ether')} ${symbol}`;
+                } else {
+                    document.getElementById('tokenBalance').innerText = '请选择一个代币';
+                }
+            } catch (error) {
+                document.getElementById('okbBalance').innerText = '无法获取OKB余额';
+                document.getElementById('tokenBalance').innerText = '无法获取代币余额';
+            }
+        }
+
+        async function fetchTokenList() {
+            if (!web3 || !tokenFactoryContract) {
+                document.getElementById('tokenList').innerHTML = '<p class="status">请连接钱包以查看代币</p>';
+                return;
+            }
+            try {
+                const tokenCount = await tokenFactoryContract.methods.tokenCount().call();
+                const tokenListDiv = document.getElementById('tokenList');
+                tokenListDiv.innerHTML = '';
+                const tokens = [];
+                for (let i = 0; i < tokenCount; i++) {
+                    const tokenAddress = await tokenFactoryContract.methods.tokenList(i).call();
+                    if (tokenAddress !== '0x0000000000000000000000000000000000000000') {
+                        const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
+                        const name = await tokenContract.methods.name().call();
+                        const symbol = await tokenContract.methods.symbol().call();
+                        const totalSupply = await tokenContract.methods.totalSupply().call();
+                        const collateral = await tokenFactoryContract.methods.collateral(tokenAddress).call();
+                        const tokenState = await tokenFactoryContract.methods.tokens(tokenAddress).call();
+                        const fundingGoal = await tokenFactoryContract.methods.FUNDING_GOAL().call();
+                        const progress = (Number(collateral) / Number(fundingGoal)) * 100;
+                        tokens.push({
+                            index: i,
+                            address: tokenAddress,
+                            name,
+                            symbol,
+                            totalSupply: web3.utils.fromWei(totalSupply, 'ether'),
+                            collateral: web3.utils.fromWei(collateral, 'ether'),
+                            state: ['未创建', '募资中', '交易中'][tokenState],
+                            progress: progress.toFixed(2)
+                        });
+                    }
+                }
+                tokens.sort((a, b) => b.index - a.index); // 按索引降序排序（最新优先）
+                tokens.forEach(token => {
+                    const card = document.createElement('div');
+                    card.className = 'token-card';
+                    card.innerHTML = `
+                        <h3>${token.name} (${token.symbol})</h3>
+                        <p>地址: ${token.address.slice(0, 6)}...${token.address.slice(-4)}</p>
+                        <p>总供应量: ${token.totalSupply} ${token.symbol}</p>
+                        <p>抵押: ${token.collateral} OKB</p>
+                        <p>状态: ${token.state}</p>
+                        <p>募资进度: ${token.progress}%</p>
+                    `;
+                    card.addEventListener('click', () => {
+                        currentTokenAddress = token.address;
+                        document.getElementById('tokenContract').value = token.address;
+                        fetchTokenInfo();
+                        window.history.replaceState({}, '', `?token=${token.address}`);
+                    });
+                    tokenListDiv.appendChild(card);
+                });
+                if (tokens.length === 0) {
+                    tokenListDiv.innerHTML = '<p class="status">未找到代币</p>';
+                }
+            } catch (error) {
+                document.getElementById('tokenList').innerHTML = `<p class="status">无法获取代币列表: ${error.message}</p>`;
+            }
+        }
+
+        async function searchToken() {
+            const tokenAddress = document.getElementById('contractInput').value.trim();
+            const status = document.getElementById('status');
+            if (!web3.utils.isAddress(tokenAddress)) {
+                status.innerText = '请输入有效的代币合约地址';
+                document.getElementById('tokenInfo').style.display = 'none';
+                currentTokenAddress = '';
+                document.getElementById('tokenContract').value = '';
+                window.history.replaceState({}, '', `/funcn/`);
+                return;
+            }
+            try {
+                status.innerText = '正在搜索代币...';
+                const tokenState = await tokenFactoryContract.methods.tokens(tokenAddress).call();
+                if (tokenState == 0) {
+                    status.innerText = '未找到代币或代币未创建';
+                    document.getElementById('tokenInfo').style.display = 'none';
+                    currentTokenAddress = '';
+                    document.getElementById('tokenContract').value = '';
+                    window.history.replaceState({}, '', `/funcn/`);
+                    return;
+                }
+                currentTokenAddress = tokenAddress;
+                document.getElementById('tokenContract').value = tokenAddress;
+                await fetchTokenInfo();
+                status.innerText = '';
+                window.history.replaceState({}, '', `?token=${tokenAddress}`);
+            } catch (error) {
+                status.innerText = `无法获取代币: ${error.message}`;
+                document.getElementById('tokenInfo').style.display = 'none';
+                currentTokenAddress = '';
+                document.getElementById('tokenContract').value = '';
+                window.history.replaceState({}, '', `/funcn/`);
+            }
+        }
+
+        async function fetchTokenInfo() {
+            if (!currentTokenAddress || !web3.utils.isAddress(currentTokenAddress)) {
+                document.getElementById('tokenInfo').style.display = 'none';
+                document.getElementById('progressResult').innerText = '';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('buyAmount').disabled = true;
+                document.getElementById('sellAmount').disabled = true;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = true);
+                document.getElementById('buyButton').disabled = true;
+                document.getElementById('sellButton').disabled = true;
+                document.getElementById('tokenBalance').innerText = '请选择一个代币';
+                return;
+            }
+            try {
+                tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                const name = await tokenContract.methods.name().call();
+                const symbol = await tokenContract.methods.symbol().call();
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                const collateral = await tokenFactoryContract.methods.collateral(currentTokenAddress).call();
+                const fundingGoal = await tokenFactoryContract.methods.FUNDING_GOAL().call();
+                const progress = (Number(collateral) / Number(fundingGoal)) * 100;
+
+                document.getElementById('tokenDetails').innerText = `代币: ${name} (${symbol})`;
+                document.getElementById('progressResult').innerText = `募资进度: ${progress.toFixed(2)}% (状态: ${['未创建', '募资中', '交易中'][tokenState]})`;
+                document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
+                document.getElementById('tokenInfo').style.display = 'block';
+
+                const isFunding = tokenState == 1 && accounts;
+                document.getElementById('buyAmount').disabled = !isFunding;
+                document.getElementById('sellAmount').disabled = !isFunding;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = !isFunding);
+                document.getElementById('buyButton').disabled = !isFunding;
+                document.getElementById('sellButton').disabled = !isFunding;
+
+                await updateBalances();
+            } catch (error) {
+                document.getElementById('tokenInfo').style.display = 'none';
+                document.getElementById('progressResult').innerText = '';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('tokenDetails').innerText = `无法获取代币信息: ${error.message}`;
+                document.getElementById('tokenBalance').innerText = '无法获取代币信息';
+                document.getElementById('buyAmount').disabled = true;
+                document.getElementById('sellAmount').disabled = true;
+                document.querySelectorAll('.percent-buttons button').forEach(btn => btn.disabled = true);
+                document.getElementById('buyButton').disabled = true;
+                document.getElementById('sellButton').disabled = true;
+            }
+        }
+
+        async function setPercent(percent, action) {
+            if (!web3 || !accounts) {
+                document.getElementById('transactionStatus').innerText = '请连接钱包';
+                return;
+            }
+            try {
+                let amount;
+                if (action === 'buy') {
+                    const okbBalance = await web3.eth.getBalance(accounts[0]);
+                    const balanceInOKB = Number(web3.utils.fromWei(okbBalance, 'ether'));
+                    amount = (balanceInOKB * percent / 100).toFixed(4);
+                    if (percent === 100) amount = (balanceInOKB - 0.001).toFixed(4);
+                    document.getElementById('buyAmount').value = amount > 0 ? amount : 0;
+                } else {
+                    if (!currentTokenAddress || !tokenContract) {
+                        document.getElementById('transactionStatus').innerText = '未选择代币';
+                        return;
+                    }
+                    const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                    const balanceInTokens = Number(web3.utils.fromWei(tokenBalance, 'ether'));
+                    amount = (balanceInTokens * percent / 100).toFixed(4);
+                    if (percent === 100) amount = (balanceInTokens - 0.001).toFixed(4);
+                    document.getElementById('sellAmount').value = amount > 0 ? amount : 0;
+                }
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = `无法设置金额: ${error.message}`;
+            }
+        }
+
+        async function buyTokens() {
+            if (!web3 || !accounts || !currentTokenAddress) {
+                document.getElementById('transactionStatus').innerText = '请连接钱包并选择一个代币';
+                return;
+            }
+            const amount = document.getElementById('buyAmount').value;
+            if (!amount || amount <= 0) {
+                document.getElementById('transactionStatus').innerText = '请输入有效金额';
+                return;
+            }
+            try {
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                if (tokenState != 1) {
+                    document.getElementById('transactionStatus').innerText = '代币不在募资状态';
+                    return;
+                }
+                document.getElementById('transactionStatus').innerText = '正在购买代币...';
+                const gas = await tokenFactoryContract.methods.buyTokens(currentTokenAddress).estimateGas({ from: accounts[0], value: web3.utils.toWei(amount, 'ether') });
+                await tokenFactoryContract.methods.buyTokens(currentTokenAddress).send({ from: accounts[0], value: web3.utils.toWei(amount, 'ether'), gas: Math.floor(gas * 1.2) });
+                document.getElementById('transactionStatus').innerText = '购买成功！';
+                await fetchTokenInfo();
+                await fetchTokenList();
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = `购买失败: ${error.message}`;
+            }
+        }
+
+        async function sellTokens() {
+            if (!web3 || !accounts || !currentTokenAddress) {
+                document.getElementById('transactionStatus').innerText = '请连接钱包并选择一个代币';
+                return;
+            }
+            const amount = document.getElementById('sellAmount').value;
+            if (!amount || amount <= 0) {
+                document.getElementById('transactionStatus').innerText = '请输入有效金额';
+                return;
+            }
+            try {
+                const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
+                if (tokenState != 1) {
+                    document.getElementById('transactionStatus').innerText = '代币不在募资状态';
+                    return;
+                }
+                document.getElementById('transactionStatus').innerText = '正在出售代币...';
+                const gas = await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).estimateGas({ from: accounts[0] });
+                await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+                document.getElementById('transactionStatus').innerText = '出售成功！';
+                await fetchTokenInfo();
+                await fetchTokenList();
+            } catch (error) {
+                document.getElementById('transactionStatus').innerText = `出售失败: ${error.message}`;
+            }
+        }
+
+        async function createToken() {
+            if (!web3 || !accounts) {
+                document.getElementById('createTokenStatus').innerText = '请连接钱包';
+                return;
+            }
+            const name = document.getElementById('tokenName').value.trim();
+            const symbol = document.getElementById('tokenSymbol').value.trim();
+            if (!name || !symbol) {
+                document.getElementById('createTokenStatus').innerText = '请输入有效的代币名称和符号';
+                return;
+            }
+            try {
+                document.getElementById('createTokenStatus').innerText = '正在创建代币...';
+                const gas = await tokenFactoryContract.methods.createToken(name, symbol).estimateGas({ from: accounts[0] });
+                const result = await tokenFactoryContract.methods.createToken(name, symbol).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+                const tokenAddress = result.events[0]?.returnValues?.tokenAddress || result.returnValues[0];
+                document.getElementById('createTokenStatus').innerText = `代币创建成功: ${tokenAddress}`;
+                document.getElementById('tokenContract').value = tokenAddress;
+                currentTokenAddress = tokenAddress;
+                await fetchTokenInfo();
+                await fetchTokenList();
+            } catch (error) {
+                document.getElementById('createTokenStatus').innerText = `创建失败: ${error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || '未知原因' : error.message}`;
+            }
+        }
+
+        function parseUrlAndLoad() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let tokenAddress = '';
+            if (urlParams.has('token')) {
+                tokenAddress = decodeURIComponent(urlParams.get('token'));
+            }
+            if (web3.utils.isAddress(tokenAddress)) {
+                document.getElementById('contractInput').value = tokenAddress;
+                currentTokenAddress = tokenAddress;
+                document.getElementById('tokenContract').value = tokenAddress;
+                fetchTokenInfo();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contractInput = document.getElementById('contractInput');
+            const searchButton = document.getElementById('searchButton');
+            const connectWalletButton = document.getElementById('connectWallet');
+
+            searchButton.addEventListener('click', searchToken);
+            contractInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchToken();
+            });
+            connectWalletButton.addEventListener('click', connectWallet);
+
+            parseUrlAndLoad();
+        });
+    </script>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e73b454b9e794bdbbb76a784c9565c07","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
